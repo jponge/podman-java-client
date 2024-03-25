@@ -19,13 +19,18 @@
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <assertj.version>3.25.1</assertj.version>
         <awaitility.version>4.2.0</awaitility.version>
+        <jackson.version>2.16.1</jackson.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-client</artifactId>
-            <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -54,6 +59,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-stack-depchain</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>

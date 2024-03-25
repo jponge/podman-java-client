@@ -34,8 +34,14 @@ class ConcretePodmanMachineClient implements PodmanMachineClient {
     }
 
     @Override
-    public Future<JsonArray> inspect(String name) {
-        return vertx.executeBlocking(() -> (JsonArray) run("podman", "machine", "inspect", name));
+    public Future<PodmanMachineInspectResult> inspect(String name) {
+        return vertx.executeBlocking(() -> {
+            JsonArray data = (JsonArray) run("podman", "machine", "inspect", name);
+            if (data.size() != 1) {
+                throw new IllegalStateException("Expected an array of size 1 instead of " + data.size());
+            }
+            return new PodmanMachineInspectResult(data.getJsonObject(0));
+        });
     }
 
     private Object run(String... command) throws IOException, InterruptedException, TimeoutException {

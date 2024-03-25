@@ -38,5 +38,5 @@ public interface PodmanMachineClient {
 
     Future<JsonArray> list();
 
-    Future<JsonArray> inspect(String name);
+    Future<PodmanMachineInspectResult> inspect(String name);
 }

@@ -4,16 +4,17 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.machine.machine.PodmanMachineClient;
+import podman.machine.machine.PodmanMachineInspectResult;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.TestInstance.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -33,14 +34,20 @@ class PodmanMachineClientTest {
 
     @Test
     void inspect() throws Throwable {
+        String target = "podman-machine-default";
         PodmanMachineClient client = PodmanMachineClient.create(vertx);
-        JsonArray data = awaitResult(client.inspect("podman-machine-default"));
+        PodmanMachineInspectResult result = awaitResult(client.inspect(target));
 
-        assertThat(data).hasSize(1);
-        JsonObject entry = data.getJsonObject(0);
-        assertThat(entry.containsKey("ConfigDir")).isTrue();
-        assertThat(entry.containsKey("ConnectionInfo")).isTrue();
-        assertThat(entry.containsKey("SSHConfig")).isTrue();
+        JsonObject data = result.payload();
+        assertThat(data.containsKey("ConfigDir")).isTrue();
+        assertThat(data.containsKey("ConnectionInfo")).isTrue();
+        assertThat(data.containsKey("SSHConfig")).isTrue();
+
+        assertThat(result.payload()).isSameAs(data);
+        assertThat(result.connectionSocketPath()).isNotBlank();
+        assertThat(result.name()).isEqualTo(target);
+        assertThat(result.state()).isNotBlank();
+        assertDoesNotThrow(result::rootful);
     }
 
     @Test
