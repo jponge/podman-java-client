@@ -23,7 +23,7 @@ public class PodmanMachineInspectResult {
         return payload.getString("State");
     }
 
-    public boolean rootful() {
+    public boolean isRootful() {
         return payload.getBoolean("Rootful");
     }
 

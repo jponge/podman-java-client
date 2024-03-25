@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.time.Duration;
+import java.util.List;
 
 public interface PodmanMachineClient {
 
@@ -36,7 +37,7 @@ public interface PodmanMachineClient {
 
     Future<JsonObject> info();
 
-    Future<JsonArray> list();
+    Future<List<PodmanMachineListResult>> list();
 
     Future<PodmanMachineInspectResult> inspect(String name);
 }

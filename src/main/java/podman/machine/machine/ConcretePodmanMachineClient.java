@@ -10,6 +10,8 @@ import podman.machine.machine.PodmanMachineClient;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -29,8 +31,16 @@ class ConcretePodmanMachineClient implements PodmanMachineClient {
     }
 
     @Override
-    public Future<JsonArray> list() {
-        return vertx.executeBlocking(() -> (JsonArray) run("podman", "machine", "list", "--format", "json"));
+    public Future<List<PodmanMachineListResult>> list() {
+        return vertx.executeBlocking(() -> {
+            JsonArray data = (JsonArray) run("podman", "machine", "list", "--format", "json");
+            int length = data.size();
+            ArrayList<PodmanMachineListResult> items = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                items.add(new PodmanMachineListResult(data.getJsonObject(i)));
+            }
+            return items;
+        });
     }
 
     @Override

@@ -4,12 +4,14 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.machine.machine.PodmanMachineClient;
 import podman.machine.machine.PodmanMachineInspectResult;
+import podman.machine.machine.PodmanMachineListResult;
+
+import java.util.List;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +49,7 @@ class PodmanMachineClientTest {
         assertThat(result.connectionSocketPath()).isNotBlank();
         assertThat(result.name()).isEqualTo(target);
         assertThat(result.state()).isNotBlank();
-        assertDoesNotThrow(result::rootful);
+        assertDoesNotThrow(result::isRootful);
     }
 
     @Test
@@ -62,11 +64,12 @@ class PodmanMachineClientTest {
     @Test
     void list() throws Throwable {
         PodmanMachineClient client = PodmanMachineClient.create(vertx);
-        JsonArray data = awaitResult(client.list());
+        List<PodmanMachineListResult> data = awaitResult(client.list());
 
         assertThat(data).hasSizeGreaterThanOrEqualTo(1);
-        JsonObject entry = data.getJsonObject(0);
-        assertThat(entry.containsKey("Name")).isTrue();
-        assertThat(entry.containsKey("Running")).isTrue();
+        PodmanMachineListResult first = data.get(0);
+        assertThat(first.cpus()).isPositive();
+        assertThat(first.name()).isNotBlank();
+        assertThat(first.remoteUsername()).isNotBlank();
     }
 }
