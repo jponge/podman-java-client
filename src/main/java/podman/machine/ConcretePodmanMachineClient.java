@@ -56,6 +56,11 @@ class ConcretePodmanMachineClient implements PodmanMachineClient {
         });
     }
 
+    @Override
+    public Future<String> findDefaultMachineConnectionSocketPath() {
+        return inspect("podman-machine-default").map(PodmanMachineInspectResult::connectionSocketPath);
+    }
+
     private Object run(String... command) throws IOException, InterruptedException, TimeoutException {
         ProcessResult processResult = new ProcessExecutor(command)
                 .readOutput(true)

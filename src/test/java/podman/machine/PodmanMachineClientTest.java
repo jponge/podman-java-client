@@ -12,10 +12,9 @@ import java.util.List;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.TestInstance.*;
+import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class PodmanMachineClientTest {
@@ -51,10 +50,17 @@ class PodmanMachineClientTest {
     }
 
     @Test
-    void inspectMissing() throws Throwable {
+    void inspectMissing() {
         PodmanMachineClient client = PodmanMachineClient.create(vertx);
         IOException err = assertThrows(IOException.class, () -> awaitResult(client.inspect("yolo-abcdef-123456")));
         assertThat(err).hasMessageContaining("Failed with exit code");
+    }
+
+    @Test
+    void findDefaultMachineConnectionSocketPath() throws Throwable {
+        PodmanMachineClient client = PodmanMachineClient.create(vertx);
+        String path = awaitResult(client.findDefaultMachineConnectionSocketPath());
+        assertThat(path).isNotBlank();
     }
 
     @Test

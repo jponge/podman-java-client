@@ -29,6 +29,7 @@ public interface PodmanMachineClient {
     static PodmanMachineClient create(Vertx vertx) {
         return new ConcretePodmanMachineClient(vertx, new Options());
     }
+
     static PodmanMachineClient create(Vertx vertx, Options options) {
         return new ConcretePodmanMachineClient(vertx, options);
     }
@@ -38,4 +39,6 @@ public interface PodmanMachineClient {
     Future<List<PodmanMachineListResult>> list();
 
     Future<PodmanMachineInspectResult> inspect(String name);
+
+    Future<String> findDefaultMachineConnectionSocketPath();
 }
