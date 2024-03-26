@@ -20,6 +20,7 @@
         <assertj.version>3.25.1</assertj.version>
         <awaitility.version>4.2.0</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
+        <zt-exec.version>1.12</zt-exec.version>
     </properties>
 
     <dependencies>
@@ -28,9 +29,9 @@
             <artifactId>vertx-web-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-exec</artifactId>
+            <version>${zt-exec.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
