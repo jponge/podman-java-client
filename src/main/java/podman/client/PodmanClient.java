@@ -1,4 +1,4 @@
-package podman.machine;
+package podman.client;
 
 import io.vertx.core.Vertx;
 

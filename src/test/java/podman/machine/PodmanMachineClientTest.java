@@ -1,16 +1,11 @@
 package podman.machine;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import podman.machine.machine.PodmanMachineClient;
-import podman.machine.machine.PodmanMachineInfoResult;
-import podman.machine.machine.PodmanMachineInspectResult;
-import podman.machine.machine.PodmanMachineListResult;
 
 import java.io.IOException;
 import java.util.List;

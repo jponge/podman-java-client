@@ -1,4 +1,4 @@
-package podman.machine.machine;
+package podman.machine;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
