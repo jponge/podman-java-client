@@ -12,12 +12,14 @@ import podman.machine.machine.PodmanMachineInfoResult;
 import podman.machine.machine.PodmanMachineInspectResult;
 import podman.machine.machine.PodmanMachineListResult;
 
+import java.io.IOException;
 import java.util.List;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.TestInstance.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -51,6 +53,13 @@ class PodmanMachineClientTest {
         assertThat(result.name()).isEqualTo(target);
         assertThat(result.state()).isNotBlank();
         assertDoesNotThrow(result::isRootful);
+    }
+
+    @Test
+    void inspectMissing() throws Throwable {
+        PodmanMachineClient client = PodmanMachineClient.create(vertx);
+        IOException err = assertThrows(IOException.class, () -> awaitResult(client.inspect("yolo-abcdef-123456")));
+        assertThat(err).hasMessageContaining("Failed with exit code");
     }
 
     @Test
