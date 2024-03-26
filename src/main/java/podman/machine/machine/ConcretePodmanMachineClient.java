@@ -5,7 +5,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import podman.machine.machine.PodmanMachineClient;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,8 +25,11 @@ class ConcretePodmanMachineClient implements PodmanMachineClient {
     }
 
     @Override
-    public Future<JsonObject> info() {
-        return vertx.executeBlocking(() -> (JsonObject) run("podman", "machine", "info", "--format", "json"));
+    public Future<PodmanMachineInfoResult> info() {
+        return vertx.executeBlocking(() -> {
+            JsonObject data = (JsonObject) run("podman", "machine", "info", "--format", "json");
+            return new PodmanMachineInfoResult(data);
+        });
     }
 
     @Override

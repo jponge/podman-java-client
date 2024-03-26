@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.machine.machine.PodmanMachineClient;
+import podman.machine.machine.PodmanMachineInfoResult;
 import podman.machine.machine.PodmanMachineInspectResult;
 import podman.machine.machine.PodmanMachineListResult;
 
@@ -55,10 +56,10 @@ class PodmanMachineClientTest {
     @Test
     void info() throws Throwable {
         PodmanMachineClient client = PodmanMachineClient.create(vertx);
-        JsonObject data = awaitResult(client.info());
+        PodmanMachineInfoResult data = awaitResult(client.info());
 
-        assertThat(data.containsKey("Host")).isTrue();
-        assertThat(data.containsKey("Version")).isTrue();
+        assertThat(data.host().os()).isNotBlank();
+        assertThat(data.version().gitCommit()).isNotBlank();
     }
 
     @Test
