@@ -27,11 +27,11 @@ public interface PodmanMachineClient {
     }
 
     static PodmanMachineClient create(Vertx vertx) {
-        return new ConcretePodmanMachineClient(vertx, new Options());
+        return new PodmanMachineClientImpl(vertx, new Options());
     }
 
     static PodmanMachineClient create(Vertx vertx, Options options) {
-        return new ConcretePodmanMachineClient(vertx, options);
+        return new PodmanMachineClientImpl(vertx, options);
     }
 
     Future<PodmanMachineInfoResult> info();

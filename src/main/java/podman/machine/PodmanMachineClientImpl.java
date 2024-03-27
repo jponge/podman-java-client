@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-class ConcretePodmanMachineClient implements PodmanMachineClient {
+class PodmanMachineClientImpl implements PodmanMachineClient {
 
     private final Vertx vertx;
     private final Options options;
 
-    public ConcretePodmanMachineClient(Vertx vertx, Options options) {
+    public PodmanMachineClientImpl(Vertx vertx, Options options) {
         this.vertx = vertx;
         this.options = options;
     }
