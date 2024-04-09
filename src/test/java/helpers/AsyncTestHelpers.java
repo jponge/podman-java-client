@@ -1,11 +1,10 @@
 package helpers;
 
-import io.vertx.core.Future;
+import static org.awaitility.Awaitility.await;
 
+import io.vertx.core.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.awaitility.Awaitility.await;
 
 public interface AsyncTestHelpers {
 

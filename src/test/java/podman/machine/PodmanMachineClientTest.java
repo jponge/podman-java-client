@@ -1,20 +1,19 @@
 package podman.machine;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
-import java.io.IOException;
-import java.util.List;
-
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
+import java.io.IOException;
+import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class PodmanMachineClientTest {

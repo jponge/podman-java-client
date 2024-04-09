@@ -2,7 +2,6 @@ package podman.machine;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-
 import java.time.Duration;
 import java.util.List;
 

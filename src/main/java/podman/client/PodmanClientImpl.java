@@ -11,9 +11,8 @@ class PodmanClientImpl implements PodmanClient {
 
     public PodmanClientImpl(Vertx vertx, Options options) {
         SocketAddress socketAddress = SocketAddress.domainSocketAddress(options.getSocketPath());
-        WebClientOptions clientOptions = new WebClientOptions()
-                .setDefaultHost("localhost")
-                .setDefaultPort(9999);
+        WebClientOptions clientOptions =
+                new WebClientOptions().setDefaultHost("localhost").setDefaultPort(9999);
         WebClient webClient = WebClient.create(vertx, clientOptions);
         this.state = new ClientState(vertx, options, socketAddress, webClient);
     }
