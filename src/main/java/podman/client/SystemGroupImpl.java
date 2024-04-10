@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.predicate.ResponsePredicate;
 import io.vertx.ext.web.codec.BodyCodec;
+import podman.internal.HttpResponsePredicates;
 
 class SystemGroupImpl implements SystemGroup {
 
@@ -60,5 +61,20 @@ class SystemGroupImpl implements SystemGroup {
                     response.headers().forEach(result::put);
                     return result;
                 });
+    }
+
+    @Override
+    public Future<JsonObject> prune(PruneOptions pruneOptions) {
+        String path = state.options().getVersionedBasePath() + "libpod/system/prune";
+        return state.webClient()
+                .request(HttpMethod.POST, state.socketAddress(), path)
+                .as(BodyCodec.jsonObject())
+                .addQueryParam("all", String.valueOf(pruneOptions.all()))
+                .addQueryParam("volumes", String.valueOf(pruneOptions.volumes()))
+                .addQueryParam("external", String.valueOf(pruneOptions.external()))
+                .addQueryParam("filters", pruneOptions.filters().encode())
+                .expect(HttpResponsePredicates.statusCode(200))
+                .send()
+                .map(HttpResponse::body);
     }
 }

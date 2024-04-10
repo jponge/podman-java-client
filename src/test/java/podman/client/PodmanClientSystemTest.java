@@ -2,6 +2,7 @@ package podman.client;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -74,5 +75,31 @@ class PodmanClientSystemTest {
         assertThat(data.size()).isPositive();
         assertThat(data.containsKey("Api-Version")).isTrue();
         assertThat(data.containsKey("Libpod-Api-Version")).isTrue();
+    }
+
+    @Test
+    void prune() throws Throwable {
+        PruneOptions pruneOptions = new PruneOptions()
+                .setAll(true)
+                .setVolumes(true)
+                .filter("label", "foo")
+                .filter("label", "bar");
+        JsonObject data = awaitResult(client.system().prune(pruneOptions));
+        assertThat(data.size()).isPositive();
+        assertThat(data.containsKey("ReclaimedSpace")).isTrue();
+        assertThat(data.containsKey("ImagePruneReports")).isTrue();
+    }
+
+    @Test
+    void pruneBadFilter() throws Throwable {
+        PruneOptions pruneOptions = new PruneOptions()
+                .setAll(true)
+                .setVolumes(true)
+                .filter("foo", "bar")
+                .filter("label", "bar");
+        RequestException err = assertThrows(
+                RequestException.class, () -> awaitResult(client.system().prune(pruneOptions)));
+        assertThat(err.statusCode()).isEqualTo(500);
+        assertThat(err.payload()).contains("\"message\":\"foo is an invalid filter\"");
     }
 }

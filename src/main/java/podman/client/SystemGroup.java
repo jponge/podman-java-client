@@ -15,5 +15,5 @@ public interface SystemGroup {
 
     // TODO events (stream)
 
-    // TODO prune
+    Future<JsonObject> prune(PruneOptions pruneOptions);
 }
