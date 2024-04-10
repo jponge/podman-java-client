@@ -1,14 +1,14 @@
 package podman.client;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import podman.internal.JsonFilters;
 
 public class PruneOptions {
 
     private boolean all;
     private boolean volumes;
     private boolean external;
-    private final JsonObject filters = new JsonObject();
+    private final JsonFilters filters = new JsonFilters();
 
     public boolean all() {
         return all;
@@ -23,7 +23,7 @@ public class PruneOptions {
     }
 
     public JsonObject filters() {
-        return filters;
+        return filters.filters();
     }
 
     public PruneOptions setAll(boolean all) {
@@ -42,14 +42,7 @@ public class PruneOptions {
     }
 
     public PruneOptions filter(String key, String value) {
-        JsonArray values;
-        if (!filters.containsKey(key)) {
-            values = new JsonArray();
-            filters.put(key, values);
-        } else {
-            values = filters.getJsonArray(key);
-        }
-        values.add(value);
+        filters.filter(key, value);
         return this;
     }
 }
