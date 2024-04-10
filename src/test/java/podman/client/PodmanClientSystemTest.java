@@ -57,4 +57,22 @@ class PodmanClientSystemTest {
         assertThat(data.size()).isPositive();
         assertThat(data.containsKey("host")).isTrue();
     }
+
+    @Test
+    void df() throws Throwable {
+        JsonObject data = awaitResult(client.system().df());
+        assertThat(data.size()).isPositive();
+        assertThat(data.containsKey("ImagesSize")).isTrue();
+        assertThat(data.containsKey("Images")).isTrue();
+        assertThat(data.containsKey("Containers")).isTrue();
+        assertThat(data.containsKey("Volumes")).isTrue();
+    }
+
+    @Test
+    void ping() throws Throwable {
+        JsonObject data = awaitResult(client.system().ping());
+        assertThat(data.size()).isPositive();
+        assertThat(data.containsKey("Api-Version")).isTrue();
+        assertThat(data.containsKey("Libpod-Api-Version")).isTrue();
+    }
 }

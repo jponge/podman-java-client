@@ -36,4 +36,29 @@ class SystemGroupImpl implements SystemGroup {
                 .send()
                 .map(HttpResponse::body);
     }
+
+    @Override
+    public Future<JsonObject> df() {
+        String path = state.options().getVersionedBasePath() + "libpod/system/df";
+        return state.webClient()
+                .request(HttpMethod.GET, state.socketAddress(), path)
+                .as(BodyCodec.jsonObject())
+                .expect(ResponsePredicate.SC_OK)
+                .send()
+                .map(HttpResponse::body);
+    }
+
+    @Override
+    public Future<JsonObject> ping() {
+        String path = state.options().getVersionedBasePath() + "libpod/_ping";
+        return state.webClient()
+                .request(HttpMethod.HEAD, state.socketAddress(), path)
+                .expect(ResponsePredicate.SC_OK)
+                .send()
+                .map(response -> {
+                    JsonObject result = new JsonObject();
+                    response.headers().forEach(result::put);
+                    return result;
+                });
+    }
 }

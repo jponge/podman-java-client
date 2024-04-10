@@ -8,4 +8,12 @@ public interface SystemGroup {
     Future<JsonObject> version();
 
     Future<JsonObject> info();
+
+    Future<JsonObject> df();
+
+    Future<JsonObject> ping();
+
+    // TODO events (stream)
+
+    // TODO prune
 }
