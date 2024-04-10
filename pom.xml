@@ -15,11 +15,11 @@
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <palantir-java-format.version>2.43.0</palantir-java-format.version>
 
-        <vertx.version>4.5.4</vertx.version>
-        <netty.version>4.1.107.Final</netty.version>
+        <vertx.version>4.5.7</vertx.version>
+        <netty.version>4.1.108.Final</netty.version>
         <junit.version>5.10.2</junit.version>
-        <assertj.version>3.25.1</assertj.version>
-        <awaitility.version>4.2.0</awaitility.version>
+        <assertj.version>3.25.3</assertj.version>
+        <awaitility.version>4.2.1</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
     </properties>
