@@ -2,6 +2,8 @@ package podman.client;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.parsetools.JsonEvent;
+import io.vertx.core.streams.ReadStream;
 
 public interface SystemGroup {
 
@@ -13,7 +15,7 @@ public interface SystemGroup {
 
     Future<JsonObject> ping();
 
-    // TODO events (stream)
-
     Future<JsonObject> prune(PruneOptions pruneOptions);
+
+    ReadStream<JsonEvent> getEvents(GetEventsOptions getEventsOptions);
 }

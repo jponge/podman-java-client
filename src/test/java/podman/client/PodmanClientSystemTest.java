@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.parsetools.JsonEvent;
+import io.vertx.core.streams.ReadStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -91,7 +93,7 @@ class PodmanClientSystemTest {
     }
 
     @Test
-    void pruneBadFilter() throws Throwable {
+    void pruneBadFilter() {
         PruneOptions pruneOptions = new PruneOptions()
                 .setAll(true)
                 .setVolumes(true)
@@ -101,5 +103,20 @@ class PodmanClientSystemTest {
                 RequestException.class, () -> awaitResult(client.system().prune(pruneOptions)));
         assertThat(err.statusCode()).isEqualTo(500);
         assertThat(err.payload()).contains("\"message\":\"foo is an invalid filter\"");
+    }
+
+    @Test
+    void getEvents() throws Throwable {
+        GetEventsOptions getEventsOptions = new GetEventsOptions();
+        ReadStream<JsonEvent> stream = client.system().getEvents(getEventsOptions);
+        stream.handler(event -> {
+            System.out.println(event.type());
+            System.out.println(event.objectValue().encodePrettily());
+        });
+        // TODO revisit to check for events when we have image creation / pull APIs
+        //        awaitResult(client.system().prune(new PruneOptions()));
+        //        awaitResult(client.system().ping());
+        //        awaitResult(client.system().df());
+        //        Thread.sleep(10_000);
     }
 }

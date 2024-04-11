@@ -1,6 +1,7 @@
 package podman.client;
 
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.HttpRequest;
 import podman.internal.JsonFilters;
 
 public class PruneOptions {
@@ -44,5 +45,12 @@ public class PruneOptions {
     public PruneOptions filter(String key, String value) {
         filters.filter(key, value);
         return this;
+    }
+
+    public <T> HttpRequest<T> fillQueryParams(HttpRequest<T> request) {
+        return request.addQueryParam("all", String.valueOf(all()))
+                .addQueryParam("volumes", String.valueOf(volumes()))
+                .addQueryParam("external", String.valueOf(external()))
+                .addQueryParam("filters", filters().encode());
     }
 }
