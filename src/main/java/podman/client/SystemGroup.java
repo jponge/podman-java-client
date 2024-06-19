@@ -15,7 +15,9 @@ public interface SystemGroup {
 
     Future<JsonObject> ping();
 
-    Future<JsonObject> prune(PruneOptions pruneOptions);
+    Future<JsonObject> prune(SystemPruneOptions pruneOptions);
+
+    Future<JsonObject> check(SystemCheckOptions checkOptions);
 
     ReadStream<JsonEvent> getEvents(GetEventsOptions getEventsOptions);
 }

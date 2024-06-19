@@ -70,10 +70,22 @@ class SystemGroupImpl implements SystemGroup {
     }
 
     @Override
-    public Future<JsonObject> prune(PruneOptions pruneOptions) {
+    public Future<JsonObject> prune(SystemPruneOptions pruneOptions) {
         String path = state.options().getVersionedBasePath() + "libpod/system/prune";
         HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
         return pruneOptions
+                .fillQueryParams(request)
+                .as(BodyCodec.jsonObject())
+                .send()
+                .expecting(HttpResponsePredicates.statusCode(200))
+                .map(HttpResponse::body);
+    }
+
+    @Override
+    public Future<JsonObject> check(SystemCheckOptions checkOptions) {
+        String path = state.options().getVersionedBasePath() + "libpod/system/check";
+        HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
+        return checkOptions
                 .fillQueryParams(request)
                 .as(BodyCodec.jsonObject())
                 .send()

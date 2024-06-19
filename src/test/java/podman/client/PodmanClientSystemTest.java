@@ -81,7 +81,7 @@ class PodmanClientSystemTest {
 
     @Test
     void prune() throws Throwable {
-        PruneOptions pruneOptions = new PruneOptions()
+        SystemPruneOptions pruneOptions = new SystemPruneOptions()
                 .setAll(true)
                 .setVolumes(true)
                 .filter("label", "foo")
@@ -94,7 +94,7 @@ class PodmanClientSystemTest {
 
     @Test
     void pruneBadFilter() {
-        PruneOptions pruneOptions = new PruneOptions()
+        SystemPruneOptions pruneOptions = new SystemPruneOptions()
                 .setAll(true)
                 .setVolumes(true)
                 .filter("foo", "bar")
@@ -103,6 +103,17 @@ class PodmanClientSystemTest {
                 RequestException.class, () -> awaitResult(client.system().prune(pruneOptions)));
         assertThat(err.statusCode()).isEqualTo(500);
         assertThat(err.payload()).contains("\"message\":\"foo is an invalid filter\"");
+    }
+
+    @Test
+    void checkNoRepairs() throws Throwable {
+        // TODO revisit future API
+        //        SystemCheckOptions checkOptions = new SystemCheckOptions()
+        //                .setRepair(false)
+        //                .setQuick(true)
+        //                .setRepairLossy(false);
+        //        JsonObject data = awaitResult(client.system().check(checkOptions));
+        //        System.out.println(data.encodePrettily());
     }
 
     @Test

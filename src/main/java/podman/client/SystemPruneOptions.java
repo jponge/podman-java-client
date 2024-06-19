@@ -4,7 +4,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
 import podman.internal.JsonFilters;
 
-public class PruneOptions {
+public class SystemPruneOptions {
 
     private boolean all;
     private boolean volumes;
@@ -27,22 +27,22 @@ public class PruneOptions {
         return filters.filters();
     }
 
-    public PruneOptions setAll(boolean all) {
+    public SystemPruneOptions setAll(boolean all) {
         this.all = all;
         return this;
     }
 
-    public PruneOptions setVolumes(boolean volumes) {
+    public SystemPruneOptions setVolumes(boolean volumes) {
         this.volumes = volumes;
         return this;
     }
 
-    public PruneOptions setExternal(boolean external) {
+    public SystemPruneOptions setExternal(boolean external) {
         this.external = external;
         return this;
     }
 
-    public PruneOptions filter(String key, String value) {
+    public SystemPruneOptions filter(String key, String value) {
         filters.filter(key, value);
         return this;
     }
