@@ -1,5 +1,7 @@
 package podman.client;
 
+import static io.vertx.core.http.HttpResponseExpectation.*;
+
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -9,7 +11,6 @@ import io.vertx.core.parsetools.JsonParser;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
-import io.vertx.ext.web.client.predicate.ResponsePredicate;
 import io.vertx.ext.web.codec.BodyCodec;
 import podman.internal.HttpResponsePredicates;
 
@@ -27,8 +28,8 @@ class SystemGroupImpl implements SystemGroup {
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
                 .as(BodyCodec.jsonObject())
-                .expect(ResponsePredicate.SC_OK)
                 .send()
+                .expecting(SC_OK)
                 .map(HttpResponse::body);
     }
 
@@ -38,8 +39,8 @@ class SystemGroupImpl implements SystemGroup {
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
                 .as(BodyCodec.jsonObject())
-                .expect(ResponsePredicate.SC_OK)
                 .send()
+                .expecting(SC_OK)
                 .map(HttpResponse::body);
     }
 
@@ -49,8 +50,8 @@ class SystemGroupImpl implements SystemGroup {
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
                 .as(BodyCodec.jsonObject())
-                .expect(ResponsePredicate.SC_OK)
                 .send()
+                .expecting(SC_OK)
                 .map(HttpResponse::body);
     }
 
@@ -59,8 +60,8 @@ class SystemGroupImpl implements SystemGroup {
         String path = state.options().getVersionedBasePath() + "libpod/_ping";
         return state.webClient()
                 .request(HttpMethod.HEAD, state.socketAddress(), path)
-                .expect(ResponsePredicate.SC_OK)
                 .send()
+                .expecting(SC_OK)
                 .map(response -> {
                     JsonObject result = new JsonObject();
                     response.headers().forEach(result::put);
@@ -75,8 +76,8 @@ class SystemGroupImpl implements SystemGroup {
         return pruneOptions
                 .fillQueryParams(request)
                 .as(BodyCodec.jsonObject())
-                .expect(HttpResponsePredicates.statusCode(200))
                 .send()
+                .expecting(HttpResponsePredicates.statusCode(200))
                 .map(HttpResponse::body);
     }
 
@@ -87,9 +88,9 @@ class SystemGroupImpl implements SystemGroup {
         HttpRequest<Buffer> request = state.webClient().request(HttpMethod.GET, state.socketAddress(), path);
         getEventsOptions
                 .fillQueryParams(request)
-                .expect(ResponsePredicate.SC_OK)
                 .as(BodyCodec.jsonStream(parser))
-                .send();
+                .send()
+                .expecting(SC_OK);
         return parser;
     }
 }

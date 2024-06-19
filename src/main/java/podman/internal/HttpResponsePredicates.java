@@ -1,33 +1,25 @@
 package podman.internal;
 
-import io.vertx.core.buffer.Buffer;
+import io.vertx.core.Expectation;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
-import io.vertx.ext.web.client.predicate.ErrorConverter;
-import io.vertx.ext.web.client.predicate.ResponsePredicate;
-import io.vertx.ext.web.client.predicate.ResponsePredicateResult;
 import podman.client.RequestException;
 
 public interface HttpResponsePredicates {
 
-    static ResponsePredicate statusCode(int statusCode) {
-        ErrorConverter errorConverter = ErrorConverter.createFullBody(result -> {
-            HttpResponse<Buffer> response = result.response();
+    static Expectation<? super HttpResponse<JsonObject>> statusCode(int statusCode) {
+        return new Expectation<HttpResponse<JsonObject>>() {
+            @Override
+            public boolean test(HttpResponse<JsonObject> response) {
+                return response.statusCode() == statusCode;
+            }
+        }.wrappingFailure((response, err) -> {
             int status = response.statusCode();
             if (response.getHeader("content-type").equals("application/json")) {
-                return new RequestException(status, response.bodyAsString());
+                return new RequestException(status, response.body().encode());
             } else {
-                return new RequestException(status, result.message());
+                return new RequestException(status, "Status code " + response.statusCode() + " is not " + statusCode);
             }
         });
-        return ResponsePredicate.create(
-                response -> {
-                    if (response.statusCode() == statusCode) {
-                        return ResponsePredicateResult.success();
-                    } else {
-                        return ResponsePredicateResult.failure(
-                                "Status code " + response.statusCode() + " is not " + statusCode);
-                    }
-                },
-                errorConverter);
     }
 }
