@@ -125,7 +125,7 @@ class PodmanClientSystemTest {
             System.out.println(event.objectValue().encodePrettily());
         });
         // TODO revisit to check for events when we have image creation / pull APIs
-        //        awaitResult(client.system().prune(new PruneOptions()));
+        //        awaitResult(client.system().prune(new SystemPruneOptions()));
         //        awaitResult(client.system().ping());
         //        awaitResult(client.system().df());
         //        Thread.sleep(10_000);

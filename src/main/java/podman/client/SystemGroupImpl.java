@@ -1,6 +1,8 @@
 package podman.client;
 
-import static io.vertx.core.http.HttpResponseExpectation.*;
+import static io.vertx.core.http.HttpResponseExpectation.JSON;
+import static io.vertx.core.http.HttpResponseExpectation.SC_OK;
+import static podman.internal.HttpPredicates.requestException;
 
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
@@ -12,7 +14,6 @@ import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.codec.BodyCodec;
-import podman.internal.HttpResponsePredicates;
 
 class SystemGroupImpl implements SystemGroup {
 
@@ -27,10 +28,9 @@ class SystemGroupImpl implements SystemGroup {
         String path = state.options().getVersionedBasePath() + "libpod/version";
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
-                .as(BodyCodec.jsonObject())
                 .send()
-                .expecting(SC_OK)
-                .map(HttpResponse::body);
+                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
     }
 
     @Override
@@ -38,10 +38,9 @@ class SystemGroupImpl implements SystemGroup {
         String path = state.options().getVersionedBasePath() + "libpod/info";
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
-                .as(BodyCodec.jsonObject())
                 .send()
-                .expecting(SC_OK)
-                .map(HttpResponse::body);
+                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
     }
 
     @Override
@@ -49,10 +48,9 @@ class SystemGroupImpl implements SystemGroup {
         String path = state.options().getVersionedBasePath() + "libpod/system/df";
         return state.webClient()
                 .request(HttpMethod.GET, state.socketAddress(), path)
-                .as(BodyCodec.jsonObject())
                 .send()
-                .expecting(SC_OK)
-                .map(HttpResponse::body);
+                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
     }
 
     @Override
@@ -61,7 +59,7 @@ class SystemGroupImpl implements SystemGroup {
         return state.webClient()
                 .request(HttpMethod.HEAD, state.socketAddress(), path)
                 .send()
-                .expecting(SC_OK)
+                .expecting(SC_OK.wrappingFailure(requestException()))
                 .map(response -> {
                     JsonObject result = new JsonObject();
                     response.headers().forEach(result::put);
@@ -75,10 +73,9 @@ class SystemGroupImpl implements SystemGroup {
         HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
         return pruneOptions
                 .fillQueryParams(request)
-                .as(BodyCodec.jsonObject())
                 .send()
-                .expecting(HttpResponsePredicates.statusCode(200))
-                .map(HttpResponse::body);
+                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
     }
 
     @Override
@@ -87,10 +84,9 @@ class SystemGroupImpl implements SystemGroup {
         HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
         return checkOptions
                 .fillQueryParams(request)
-                .as(BodyCodec.jsonObject())
                 .send()
-                .expecting(HttpResponsePredicates.statusCode(200))
-                .map(HttpResponse::body);
+                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
     }
 
     @Override
@@ -102,7 +98,7 @@ class SystemGroupImpl implements SystemGroup {
                 .fillQueryParams(request)
                 .as(BodyCodec.jsonStream(parser))
                 .send()
-                .expecting(SC_OK);
+                .expecting(SC_OK.wrappingFailure(requestException()));
         return parser;
     }
 }
