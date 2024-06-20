@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.machine.PodmanMachineClient;
@@ -106,14 +107,13 @@ class PodmanClientSystemTest {
     }
 
     @Test
+    @Disabled
     void checkNoRepairs() throws Throwable {
-        // TODO revisit future API
-        //        SystemCheckOptions checkOptions = new SystemCheckOptions()
-        //                .setRepair(false)
-        //                .setQuick(true)
-        //                .setRepairLossy(false);
-        //        JsonObject data = awaitResult(client.system().check(checkOptions));
-        //        System.out.println(data.encodePrettily());
+        // TODO revisit future Podman API
+        SystemCheckOptions checkOptions =
+                new SystemCheckOptions().setRepair(false).setQuick(true).setRepairLossy(false);
+        JsonObject data = awaitResult(client.system().check(checkOptions));
+        System.out.println(data.encodePrettily());
     }
 
     @Test

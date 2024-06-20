@@ -26,4 +26,9 @@ public class RequestException extends NoStackTraceException {
     public String contentType() {
         return contentType;
     }
+
+    @Override
+    public String getMessage() {
+        return "[status=" + statusCode + ", content-type=" + contentType + "] " + payload;
+    }
 }
