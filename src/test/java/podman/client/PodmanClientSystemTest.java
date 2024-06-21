@@ -118,7 +118,7 @@ class PodmanClientSystemTest {
 
     @Test
     void getEvents() throws Throwable {
-        GetEventsOptions getEventsOptions = new GetEventsOptions();
+        SystemGetEventsOptions getEventsOptions = new SystemGetEventsOptions();
         ReadStream<JsonEvent> stream = client.system().getEvents(getEventsOptions);
         stream.handler(event -> {
             System.out.println(event.type());

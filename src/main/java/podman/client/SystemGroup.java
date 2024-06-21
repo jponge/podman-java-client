@@ -19,5 +19,5 @@ public interface SystemGroup {
 
     Future<JsonObject> check(SystemCheckOptions checkOptions);
 
-    ReadStream<JsonEvent> getEvents(GetEventsOptions getEventsOptions);
+    ReadStream<JsonEvent> getEvents(SystemGetEventsOptions getEventsOptions);
 }

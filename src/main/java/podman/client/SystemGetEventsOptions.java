@@ -4,7 +4,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
 import podman.internal.JsonFilters;
 
-public class GetEventsOptions {
+public class SystemGetEventsOptions {
 
     private final JsonFilters filters = new JsonFilters();
     private String since;
@@ -15,7 +15,7 @@ public class GetEventsOptions {
         return since;
     }
 
-    public GetEventsOptions setSince(String since) {
+    public SystemGetEventsOptions setSince(String since) {
         this.since = since;
         return this;
     }
@@ -24,7 +24,7 @@ public class GetEventsOptions {
         return stream;
     }
 
-    public GetEventsOptions setStream(boolean stream) {
+    public SystemGetEventsOptions setStream(boolean stream) {
         this.stream = stream;
         return this;
     }
@@ -33,12 +33,12 @@ public class GetEventsOptions {
         return until;
     }
 
-    public GetEventsOptions setUntil(String until) {
+    public SystemGetEventsOptions setUntil(String until) {
         this.until = until;
         return this;
     }
 
-    public GetEventsOptions filter(String key, String value) {
+    public SystemGetEventsOptions filter(String key, String value) {
         filters.filter(key, value);
         return this;
     }
