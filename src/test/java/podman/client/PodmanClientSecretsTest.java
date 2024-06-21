@@ -62,4 +62,16 @@ public class PodmanClientSecretsTest {
         assertThat(awaitResult(client.secrets().exists("foo"))).isFalse();
         awaitResult(client.secrets().remove("yolo"));
     }
+
+    @Test
+    @Order(4)
+    void inspect() throws Throwable {
+        awaitResult(client.secrets().create("yolo", "this", new SecretCreateOptions()));
+        JsonObject data = awaitResult(client.secrets().inspect("yolo", true));
+        assertThat(data.containsKey("ID")).isTrue();
+        assertThat(data.getString("SecretData")).isEqualTo("this");
+        data = awaitResult(client.secrets().inspect("yolo", false));
+        assertThat(data.containsKey("SecretData")).isFalse();
+        awaitResult(client.secrets().remove("yolo"));
+    }
 }

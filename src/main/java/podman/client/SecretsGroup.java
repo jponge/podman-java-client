@@ -10,4 +10,6 @@ public interface SecretsGroup {
     Future<Void> remove(String name);
 
     Future<Boolean> exists(String name);
+
+    Future<JsonObject> inspect(String name, boolean showSecret);
 }

@@ -48,4 +48,14 @@ class SecretsGroupImpl implements SecretsGroup {
                 .expecting(SC_OK.or(SC_NO_CONTENT).or(SC_NOT_FOUND).wrappingFailure(requestException()))
                 .map(response -> response.statusCode() != 404);
     }
+
+    @Override
+    public Future<JsonObject> inspect(String name, boolean showSecret) {
+        String path = state.options().getVersionedBasePath() + "libpod/secrets/" + name + "/json";
+        return state.webClient().request(HttpMethod.GET, state.socketAddress(), path)
+                .addQueryParam("showsecret", String.valueOf(showSecret))
+                .send()
+                .expecting(SC_OK.wrappingFailure(requestException()))
+                .map(HttpResponse::bodyAsJsonObject);
+    }
 }
