@@ -2,14 +2,14 @@ package podman.client;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
-import podman.internal.JsonFilters;
+import podman.internal.JsonLabels;
 
 public class SystemPruneOptions {
 
     private boolean all;
     private boolean volumes;
     private boolean external;
-    private final JsonFilters filters = new JsonFilters();
+    private final JsonLabels filters = new JsonLabels();
 
     public boolean all() {
         return all;
@@ -24,7 +24,7 @@ public class SystemPruneOptions {
     }
 
     public JsonObject filters() {
-        return filters.filters();
+        return filters.labels();
     }
 
     public SystemPruneOptions setAll(boolean all) {
@@ -43,7 +43,7 @@ public class SystemPruneOptions {
     }
 
     public SystemPruneOptions filter(String key, String value) {
-        filters.filter(key, value);
+        filters.put(key, value);
         return this;
     }
 

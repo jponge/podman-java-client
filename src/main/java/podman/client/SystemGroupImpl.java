@@ -19,7 +19,7 @@ class SystemGroupImpl implements SystemGroup {
 
     private final ClientState state;
 
-    public SystemGroupImpl(ClientState state) {
+    SystemGroupImpl(ClientState state) {
         this.state = state;
     }
 

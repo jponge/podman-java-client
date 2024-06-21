@@ -26,4 +26,9 @@ class PodmanClientImpl implements PodmanClient {
     public SystemGroup system() {
         return new SystemGroupImpl(state);
     }
+
+    @Override
+    public SecretsGroup secrets() {
+        return new SecretsGroupImpl(state);
+    }
 }

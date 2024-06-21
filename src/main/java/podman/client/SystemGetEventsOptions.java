@@ -2,11 +2,11 @@ package podman.client;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
-import podman.internal.JsonFilters;
+import podman.internal.JsonLabels;
 
 public class SystemGetEventsOptions {
 
-    private final JsonFilters filters = new JsonFilters();
+    private final JsonLabels filters = new JsonLabels();
     private String since;
     private boolean stream = true;
     private String until;
@@ -39,12 +39,12 @@ public class SystemGetEventsOptions {
     }
 
     public SystemGetEventsOptions filter(String key, String value) {
-        filters.filter(key, value);
+        filters.put(key, value);
         return this;
     }
 
     public JsonObject filters() {
-        return filters.filters();
+        return filters.labels();
     }
 
     public <T> HttpRequest<T> fillQueryParams(HttpRequest<T> request) {

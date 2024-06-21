@@ -41,4 +41,6 @@ public interface PodmanClient {
     void close();
 
     SystemGroup system();
+
+    SecretsGroup secrets();
 }
