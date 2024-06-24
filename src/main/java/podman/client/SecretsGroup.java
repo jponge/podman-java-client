@@ -1,6 +1,7 @@
 package podman.client;
 
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public interface SecretsGroup {
@@ -12,4 +13,6 @@ public interface SecretsGroup {
     Future<Boolean> exists(String name);
 
     Future<JsonObject> inspect(String name, boolean showSecret);
+
+    Future<JsonArray> list(JsonFilters filters);
 }

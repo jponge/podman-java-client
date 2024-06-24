@@ -2,13 +2,12 @@ package podman.client;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
-import podman.internal.JsonLabels;
 
 public class SecretCreateOptions {
 
     private String driver;
     private String driverOpts;
-    private final JsonLabels labels = new JsonLabels();
+    private final JsonObject labels = new JsonObject();
 
     public String driver() {
         return driver;
@@ -29,7 +28,7 @@ public class SecretCreateOptions {
     }
 
     public JsonObject labels() {
-        return labels.labels();
+        return labels;
     }
 
     public SecretCreateOptions label(String key, String value) {
@@ -44,6 +43,6 @@ public class SecretCreateOptions {
         if (driverOpts != null) {
             request.addQueryParam("driveropts", driverOpts);
         }
-        return request.addQueryParam("labels", labels().encode());
+        return request.addQueryParam("labels", labels.encode());
     }
 }
