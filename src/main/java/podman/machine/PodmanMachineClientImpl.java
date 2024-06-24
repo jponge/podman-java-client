@@ -26,7 +26,7 @@ class PodmanMachineClientImpl implements PodmanMachineClient {
     @Override
     public Future<PodmanMachineInfoResult> info() {
         return vertx.executeBlocking(() -> {
-            JsonObject data = (JsonObject) run("podman", "machine", "info", "--format", "json");
+            JsonObject data = (JsonObject) runJson("podman", "machine", "info", "--format", "json");
             return new PodmanMachineInfoResult(data);
         });
     }
@@ -34,7 +34,7 @@ class PodmanMachineClientImpl implements PodmanMachineClient {
     @Override
     public Future<List<PodmanMachineListResult>> list() {
         return vertx.executeBlocking(() -> {
-            JsonArray data = (JsonArray) run("podman", "machine", "list", "--format", "json");
+            JsonArray data = (JsonArray) runJson("podman", "machine", "list", "--format", "json");
             int length = data.size();
             ArrayList<PodmanMachineListResult> items = new ArrayList<>();
             for (int i = 0; i < length; i++) {
@@ -47,7 +47,7 @@ class PodmanMachineClientImpl implements PodmanMachineClient {
     @Override
     public Future<PodmanMachineInspectResult> inspect(String name) {
         return vertx.executeBlocking(() -> {
-            JsonArray data = (JsonArray) run("podman", "machine", "inspect", name);
+            JsonArray data = (JsonArray) runJson("podman", "machine", "inspect", name);
             if (data.size() != 1) {
                 throw new IllegalStateException("Expected an array of size 1 instead of " + data.size());
             }
@@ -60,7 +60,7 @@ class PodmanMachineClientImpl implements PodmanMachineClient {
         return inspect("podman-machine-default").map(PodmanMachineInspectResult::connectionSocketPath);
     }
 
-    private Object run(String... command) throws IOException, InterruptedException, TimeoutException {
+    private Object runJson(String... command) throws IOException, InterruptedException, TimeoutException {
         ProcessResult processResult = new ProcessExecutor(command)
                 .readOutput(true)
                 .redirectErrorStream(true)
