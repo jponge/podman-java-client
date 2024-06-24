@@ -93,6 +93,10 @@ public class PodmanClientSecretsTest {
         awaitResult(client.secrets().create("foo", "bar", new SecretCreateOptions()));
         JsonArray secrets = awaitResult(client.secrets().list(new JsonFilters().put("name", "foo")));
         assertThat(secrets.size()).isEqualTo(1);
+        secrets = awaitResult(client.secrets().list(new JsonFilters().put("name", "_foo_")));
+        assertThat(secrets).isEmpty();
+        secrets = awaitResult(client.secrets().list(new JsonFilters()));
+        assertThat(secrets).hasSizeGreaterThanOrEqualTo(1);
         awaitResult(client.secrets().remove("foo"));
     }
 }
