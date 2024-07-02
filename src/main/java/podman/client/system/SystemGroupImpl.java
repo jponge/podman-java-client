@@ -1,4 +1,4 @@
-package podman.client;
+package podman.client.system;
 
 import static io.vertx.core.http.HttpResponseExpectation.JSON;
 import static io.vertx.core.http.HttpResponseExpectation.SC_OK;
@@ -14,12 +14,13 @@ import io.vertx.core.streams.ReadStream;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.codec.BodyCodec;
+import podman.internal.ClientState;
 
-class SystemGroupImpl implements SystemGroup {
+public class SystemGroupImpl implements SystemGroup {
 
     private final ClientState state;
 
-    SystemGroupImpl(ClientState state) {
+    public SystemGroupImpl(ClientState state) {
         this.state = state;
     }
 

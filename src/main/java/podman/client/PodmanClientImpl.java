@@ -4,6 +4,11 @@ import io.vertx.core.Vertx;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import podman.client.secrets.SecretsGroup;
+import podman.client.secrets.SecretsGroupImpl;
+import podman.client.system.SystemGroup;
+import podman.client.system.SystemGroupImpl;
+import podman.internal.ClientState;
 
 class PodmanClientImpl implements PodmanClient {
 

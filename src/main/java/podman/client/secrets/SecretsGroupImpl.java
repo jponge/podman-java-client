@@ -1,4 +1,4 @@
-package podman.client;
+package podman.client.secrets;
 
 import static io.vertx.core.http.HttpResponseExpectation.*;
 import static podman.internal.HttpPredicates.requestException;
@@ -10,12 +10,14 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
+import podman.client.JsonFilters;
+import podman.internal.ClientState;
 
-class SecretsGroupImpl implements SecretsGroup {
+public class SecretsGroupImpl implements SecretsGroup {
 
     private final ClientState state;
 
-    SecretsGroupImpl(ClientState state) {
+    public SecretsGroupImpl(ClientState state) {
         this.state = state;
     }
 

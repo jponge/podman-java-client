@@ -16,6 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import podman.client.system.SystemCheckOptions;
+import podman.client.system.SystemGetEventsOptions;
+import podman.client.system.SystemPruneOptions;
 import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

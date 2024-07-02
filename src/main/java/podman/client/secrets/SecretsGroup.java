@@ -1,8 +1,9 @@
-package podman.client;
+package podman.client.secrets;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import podman.client.JsonFilters;
 
 public interface SecretsGroup {
 

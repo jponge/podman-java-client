@@ -1,4 +1,4 @@
-package podman.client;
+package podman.client.secrets;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;

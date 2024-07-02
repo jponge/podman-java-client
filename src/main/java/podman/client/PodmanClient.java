@@ -1,6 +1,8 @@
 package podman.client;
 
 import io.vertx.core.Vertx;
+import podman.client.secrets.SecretsGroup;
+import podman.client.system.SystemGroup;
 
 public interface PodmanClient {
 

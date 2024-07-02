@@ -1,7 +1,8 @@
-package podman.client;
+package podman.client.system;
 
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
+import podman.client.JsonFilters;
 
 public class SystemGetEventsOptions {
 
