@@ -3,6 +3,7 @@ package podman.client;
 import io.vertx.core.Vertx;
 import podman.client.secrets.SecretsGroup;
 import podman.client.system.SystemGroup;
+import podman.client.volumes.VolumesGroup;
 
 public interface PodmanClient {
 
@@ -45,4 +46,6 @@ public interface PodmanClient {
     SystemGroup system();
 
     SecretsGroup secrets();
+
+    VolumesGroup volumes();
 }

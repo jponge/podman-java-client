@@ -8,6 +8,8 @@ import podman.client.secrets.SecretsGroup;
 import podman.client.secrets.SecretsGroupImpl;
 import podman.client.system.SystemGroup;
 import podman.client.system.SystemGroupImpl;
+import podman.client.volumes.VolumesGroup;
+import podman.client.volumes.VolumesGroupImpl;
 import podman.internal.ClientState;
 
 class PodmanClientImpl implements PodmanClient {
@@ -35,5 +37,10 @@ class PodmanClientImpl implements PodmanClient {
     @Override
     public SecretsGroup secrets() {
         return new SecretsGroupImpl(state);
+    }
+
+    @Override
+    public VolumesGroup volumes() {
+        return new VolumesGroupImpl(state);
     }
 }
