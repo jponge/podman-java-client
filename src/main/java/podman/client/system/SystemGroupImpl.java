@@ -92,6 +92,7 @@ public class SystemGroupImpl implements SystemGroup {
 
     @Override
     public ReadStream<JsonEvent> getEvents(SystemGetEventsOptions getEventsOptions) {
+        // TODO: this is not a correct implementation
         JsonParser parser = JsonParser.newParser().objectValueMode();
         String path = state.options().getVersionedBasePath() + "libpod/events";
         HttpRequest<Buffer> request = state.webClient().request(HttpMethod.GET, state.socketAddress(), path);

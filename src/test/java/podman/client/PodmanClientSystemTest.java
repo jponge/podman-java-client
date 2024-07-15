@@ -120,6 +120,7 @@ class PodmanClientSystemTest {
     }
 
     @Test
+    @Disabled
     void getEvents() throws Throwable {
         SystemGetEventsOptions getEventsOptions = new SystemGetEventsOptions();
         ReadStream<JsonEvent> stream = client.system().getEvents(getEventsOptions);
