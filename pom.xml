@@ -58,12 +58,11 @@
             <version>${zt-exec.version}</version>
         </dependency>
         <dependency>
+            <!-- FIXME (hack around macOS netty-resolver-dns-native-macos and netty-transport-native-kqueue) -->
             <groupId>io.netty</groupId>
-            <artifactId>netty-transport-native-kqueue</artifactId>
+            <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
-            <classifier>osx-aarch_64</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
