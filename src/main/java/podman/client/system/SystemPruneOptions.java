@@ -1,7 +1,7 @@
 package podman.client.system;
 
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpRequest;
+import io.vertx.uritemplate.Variables;
 import podman.client.JsonFilters;
 
 public class SystemPruneOptions {
@@ -47,10 +47,10 @@ public class SystemPruneOptions {
         return this;
     }
 
-    public <T> HttpRequest<T> fillQueryParams(HttpRequest<T> request) {
-        return request.addQueryParam("all", String.valueOf(all()))
-                .addQueryParam("volumes", String.valueOf(volumes()))
-                .addQueryParam("external", String.valueOf(external()))
-                .addQueryParam("filters", filters().encode());
+    public Variables fillQueryParams(Variables vars) {
+        return vars.set("all", String.valueOf(all()))
+                .set("volumes", String.valueOf(volumes()))
+                .set("external", String.valueOf(external()))
+                .set("filters", filters().encode());
     }
 }

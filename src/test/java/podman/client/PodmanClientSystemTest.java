@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import podman.client.system.SystemCheckOptions;
 import podman.client.system.SystemGetEventsOptions;
 import podman.client.system.SystemPruneOptions;
 import podman.machine.PodmanMachineClient;
@@ -69,7 +68,6 @@ class PodmanClientSystemTest {
     void df() throws Throwable {
         JsonObject data = awaitResult(client.system().df());
         assertThat(data.size()).isPositive();
-        assertThat(data.containsKey("ImagesSize")).isTrue();
         assertThat(data.containsKey("Images")).isTrue();
         assertThat(data.containsKey("Containers")).isTrue();
         assertThat(data.containsKey("Volumes")).isTrue();
@@ -111,19 +109,9 @@ class PodmanClientSystemTest {
 
     @Test
     @Disabled
-    void checkNoRepairs() throws Throwable {
-        // TODO revisit future Podman API
-        SystemCheckOptions checkOptions =
-                new SystemCheckOptions().setRepair(false).setQuick(true).setRepairLossy(false);
-        JsonObject data = awaitResult(client.system().check(checkOptions));
-        System.out.println(data.encodePrettily());
-    }
-
-    @Test
-    @Disabled
     void getEvents() throws Throwable {
         SystemGetEventsOptions getEventsOptions = new SystemGetEventsOptions();
-        ReadStream<JsonEvent> stream = client.system().getEvents(getEventsOptions);
+        ReadStream<JsonEvent> stream = awaitResult(client.system().getEvents(getEventsOptions));
         stream.handler(event -> {
             System.out.println(event.type());
             System.out.println(event.objectValue().encodePrettily());

@@ -15,6 +15,13 @@ public class RequestException extends NoStackTraceException {
         this.payload = payload;
     }
 
+    public RequestException(Throwable err) {
+        super(err);
+        this.statusCode = -1;
+        this.contentType = null;
+        this.payload = null;
+    }
+
     public int statusCode() {
         return statusCode;
     }
@@ -29,6 +36,10 @@ public class RequestException extends NoStackTraceException {
 
     @Override
     public String getMessage() {
-        return "[status=" + statusCode + ", content-type=" + contentType + "] " + payload;
+        if (statusCode != -1) {
+            return "[status=" + statusCode + ", content-type=" + contentType + "] " + payload;
+        } else {
+            return getCause().getMessage();
+        }
     }
 }

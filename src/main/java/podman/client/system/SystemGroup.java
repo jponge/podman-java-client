@@ -17,7 +17,5 @@ public interface SystemGroup {
 
     Future<JsonObject> prune(SystemPruneOptions pruneOptions);
 
-    Future<JsonObject> check(SystemCheckOptions checkOptions);
-
-    ReadStream<JsonEvent> getEvents(SystemGetEventsOptions getEventsOptions);
+    Future<ReadStream<JsonEvent>> getEvents(SystemGetEventsOptions getEventsOptions);
 }

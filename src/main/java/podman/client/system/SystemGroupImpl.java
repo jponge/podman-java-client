@@ -1,20 +1,20 @@
 package podman.client.system;
 
-import static io.vertx.core.http.HttpResponseExpectation.JSON;
-import static io.vertx.core.http.HttpResponseExpectation.SC_OK;
-import static podman.internal.HttpPredicates.requestException;
+import static io.vertx.core.Future.succeededFuture;
+import static io.vertx.uritemplate.Variables.variables;
 
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.RequestOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.JsonEvent;
 import io.vertx.core.parsetools.JsonParser;
 import io.vertx.core.streams.ReadStream;
-import io.vertx.ext.web.client.HttpRequest;
-import io.vertx.ext.web.client.HttpResponse;
-import io.vertx.ext.web.codec.BodyCodec;
+import io.vertx.uritemplate.UriTemplate;
+import io.vertx.uritemplate.Variables;
 import podman.internal.ClientState;
+import podman.internal.HttpClientHelpers;
 
 public class SystemGroupImpl implements SystemGroup {
 
@@ -24,83 +24,95 @@ public class SystemGroupImpl implements SystemGroup {
         this.state = state;
     }
 
+    private static final UriTemplate VERSION_TPL = UriTemplate.of("/{base}/libpod/version");
+
     @Override
     public Future<JsonObject> version() {
-        String path = state.options().getVersionedBasePath() + "libpod/version";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(VERSION_TPL.expandToString(vars));
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                        .map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate INFO_TPL = UriTemplate.of("/{base}/libpod/info");
 
     @Override
     public Future<JsonObject> info() {
-        String path = state.options().getVersionedBasePath() + "libpod/info";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(INFO_TPL.expandToString(vars));
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                        .map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate DF_TPL = UriTemplate.of("/{base}/system/df");
 
     @Override
     public Future<JsonObject> df() {
-        String path = state.options().getVersionedBasePath() + "libpod/system/df";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(DF_TPL.expandToString(vars));
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                        .map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate PING_TPL = UriTemplate.of("/{base}/libpod/_ping");
 
     @Override
     public Future<JsonObject> ping() {
-        String path = state.options().getVersionedBasePath() + "libpod/_ping";
-        return state.webClient()
-                .request(HttpMethod.HEAD, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.wrappingFailure(requestException()))
-                .map(response -> {
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.HEAD)
+                .setServer(state.socketAddress())
+                .setURI(PING_TPL.expandToString(vars));
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(), options, response -> response.statusCode() == 200, response -> {
                     JsonObject result = new JsonObject();
                     response.headers().forEach(result::put);
-                    return result;
+                    return succeededFuture(result);
                 });
     }
 
+    private static final UriTemplate PRUNE_TPL =
+            UriTemplate.of("/{base}/libpod/system/prune{?all,volumes,external,filters}");
+
     @Override
     public Future<JsonObject> prune(SystemPruneOptions pruneOptions) {
-        String path = state.options().getVersionedBasePath() + "libpod/system/prune";
-        HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
-        return pruneOptions
-                .fillQueryParams(request)
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        String uri = PRUNE_TPL.expandToString(pruneOptions.fillQueryParams(vars));
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.POST)
+                .setServer(state.socketAddress())
+                .setURI(uri);
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                        .map(Buffer::toJsonObject));
     }
 
-    @Override
-    public Future<JsonObject> check(SystemCheckOptions checkOptions) {
-        String path = state.options().getVersionedBasePath() + "libpod/system/check";
-        HttpRequest<Buffer> request = state.webClient().request(HttpMethod.POST, state.socketAddress(), path);
-        return checkOptions
-                .fillQueryParams(request)
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
-    }
+    private static final UriTemplate EVENTS_TPL = UriTemplate.of("/{base}/libpod/events{?filters,stream,since,until}");
 
     @Override
-    public ReadStream<JsonEvent> getEvents(SystemGetEventsOptions getEventsOptions) {
-        // TODO: this is not a correct implementation
-        JsonParser parser = JsonParser.newParser().objectValueMode();
-        String path = state.options().getVersionedBasePath() + "libpod/events";
-        HttpRequest<Buffer> request = state.webClient().request(HttpMethod.GET, state.socketAddress(), path);
-        getEventsOptions
-                .fillQueryParams(request)
-                .as(BodyCodec.jsonStream(parser))
-                .send()
-                .expecting(SC_OK.wrappingFailure(requestException()));
-        return parser;
+    public Future<ReadStream<JsonEvent>> getEvents(SystemGetEventsOptions getEventsOptions) {
+        Variables vars = variables().set("base", state.options().getApiVersion());
+        String uri = EVENTS_TPL.expandToString(getEventsOptions.fillQueryParams(vars));
+        RequestOptions options = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(uri);
+        return HttpClientHelpers.makeSimplifiedRequest(
+                state.httpClient(),
+                options,
+                response -> response.statusCode() == 200,
+                response -> succeededFuture(JsonParser.newParser(response).objectValueMode()));
     }
 }

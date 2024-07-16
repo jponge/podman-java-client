@@ -1,7 +1,7 @@
 package podman.client.system;
 
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpRequest;
+import io.vertx.uritemplate.Variables;
 import podman.client.JsonFilters;
 
 public class SystemGetEventsOptions {
@@ -47,15 +47,14 @@ public class SystemGetEventsOptions {
         return filters.json();
     }
 
-    public <T> HttpRequest<T> fillQueryParams(HttpRequest<T> request) {
-        request.addQueryParam("filters", filters().encode());
-        request.addQueryParam("stream", String.valueOf(stream));
+    public Variables fillQueryParams(Variables vars) {
+        vars.set("filters", filters().encode()).set("stream", String.valueOf(stream));
         if (since != null) {
-            request.addQueryParam("since", since);
+            vars.set("since", since);
         }
         if (until != null) {
-            request.addQueryParam("until", until);
+            vars.set("until", until);
         }
-        return request;
+        return vars;
     }
 }
