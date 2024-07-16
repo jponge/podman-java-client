@@ -11,14 +11,14 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <palantir-java-format.version>2.43.0</palantir-java-format.version>
 
-        <vertx.version>4.5.8</vertx.version>
-        <netty.version>4.1.110.Final</netty.version>
-        <junit.version>5.10.2</junit.version>
-        <assertj.version>3.26.0</assertj.version>
+        <vertx.version>4.5.9</vertx.version>
+        <netty.version>4.1.111.Final</netty.version>
+        <junit.version>5.10.3</junit.version>
+        <assertj.version>3.26.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
