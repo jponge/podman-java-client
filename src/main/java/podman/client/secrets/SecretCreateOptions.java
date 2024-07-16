@@ -1,7 +1,7 @@
 package podman.client.secrets;
 
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpRequest;
+import io.vertx.uritemplate.Variables;
 
 public class SecretCreateOptions {
 
@@ -36,13 +36,13 @@ public class SecretCreateOptions {
         return this;
     }
 
-    public <T> HttpRequest<T> fillQueryParams(HttpRequest<T> request) {
+    public Variables fillQueryParams(Variables vars) {
         if (driver != null) {
-            request.addQueryParam("driver", driver);
+            vars.set("driver", driver);
         }
         if (driverOpts != null) {
-            request.addQueryParam("driveropts", driverOpts);
+            vars.set("driveropts", driverOpts);
         }
-        return request.addQueryParam("labels", labels.encode());
+        return vars.set("labels", labels.encode());
     }
 }

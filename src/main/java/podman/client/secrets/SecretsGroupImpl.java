@@ -1,15 +1,17 @@
 package podman.client.secrets;
 
-import static io.vertx.core.http.HttpResponseExpectation.*;
-import static podman.internal.HttpPredicates.requestException;
+import static io.vertx.core.Future.succeededFuture;
+import static io.vertx.uritemplate.Variables.variables;
+import static podman.internal.HttpClientHelpers.*;
 
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.RequestOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpRequest;
-import io.vertx.ext.web.client.HttpResponse;
+import io.vertx.uritemplate.UriTemplate;
+import io.vertx.uritemplate.Variables;
 import podman.client.JsonFilters;
 import podman.internal.ClientState;
 
@@ -21,57 +23,89 @@ public class SecretsGroupImpl implements SecretsGroup {
         this.state = state;
     }
 
+    private static final UriTemplate CREATE_TPL =
+            UriTemplate.of("/{base}/libpod/secrets/create{?name,driver,driveropts,labels}");
+
     @Override
     public Future<JsonObject> create(String name, String data, SecretCreateOptions options) {
-        String path = state.options().getVersionedBasePath() + "libpod/secrets/create";
-        HttpRequest<Buffer> request = state.webClient()
-                .request(HttpMethod.POST, state.socketAddress(), path)
-                .addQueryParam("name", name);
-        return options.fillQueryParams(request)
-                .sendBuffer(Buffer.buffer(data))
-                .expecting(SC_OK.or(SC_CREATED).and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars =
+                variables().set("base", state.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.POST)
+                .setServer(state.socketAddress())
+                .setURI(CREATE_TPL.expandToString(options.fillQueryParams(vars)));
+        return makeSimplifiedRequestWithPayload(
+                state.httpClient(),
+                requestOptions,
+                Buffer.buffer(data),
+                response -> statusCode(response, 200, 201),
+                response -> response.body().map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate REMOVE_TPL = UriTemplate.of("/{base}/libpod/secrets/{name}");
 
     @Override
     public Future<Void> remove(String name) {
-        String path = state.options().getVersionedBasePath() + "libpod/secrets/" + name;
-        return state.webClient()
-                .request(HttpMethod.DELETE, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.or(SC_NO_CONTENT).wrappingFailure(requestException()))
-                .mapEmpty();
+        Variables vars =
+                variables().set("base", state.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.DELETE)
+                .setServer(state.socketAddress())
+                .setURI(REMOVE_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                state.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200, 204),
+                response -> response.body().mapEmpty());
     }
+
+    private static final UriTemplate EXISTS_TPL = UriTemplate.of("/{base}/libpod/secrets/{name}/exists");
 
     @Override
     public Future<Boolean> exists(String name) {
-        String path = state.options().getVersionedBasePath() + "libpod/secrets/" + name + "/exists";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .send()
-                .expecting(SC_OK.or(SC_NO_CONTENT).or(SC_NOT_FOUND).wrappingFailure(requestException()))
-                .map(response -> response.statusCode() != 404);
+        Variables vars =
+                variables().set("base", state.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(EXISTS_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                state.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200, 204, 404),
+                response -> succeededFuture(response.statusCode() != 404));
     }
+
+    private static final UriTemplate INSPECT_TPL = UriTemplate.of("/{base}/libpod/secrets/{name}/json{?showsecret}");
 
     @Override
     public Future<JsonObject> inspect(String name, boolean showSecret) {
-        String path = state.options().getVersionedBasePath() + "libpod/secrets/" + name + "/json";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .addQueryParam("showsecret", String.valueOf(showSecret))
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonObject);
+        Variables vars = variables()
+                .set("base", state.options().getApiVersion())
+                .set("name", name)
+                .set("showsecret", String.valueOf(showSecret));
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(INSPECT_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                state.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
+                        .map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate LIST_TPL = UriTemplate.of("/{base}/libpod/secrets/json{?filters}");
 
     @Override
     public Future<JsonArray> list(JsonFilters filters) {
-        String path = state.options().getVersionedBasePath() + "libpod/secrets/json";
-        return state.webClient()
-                .request(HttpMethod.GET, state.socketAddress(), path)
-                .addQueryParam("filters", filters.json().encode())
-                .send()
-                .expecting(SC_OK.and(JSON).wrappingFailure(requestException()))
-                .map(HttpResponse::bodyAsJsonArray);
+        Variables vars = variables()
+                .set("base", state.options().getApiVersion())
+                .set("filters", filters.json().encode());
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(state.socketAddress())
+                .setURI(LIST_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                state.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
+                        .map(Buffer::toJsonArray));
     }
 }

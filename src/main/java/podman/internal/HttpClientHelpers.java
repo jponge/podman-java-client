@@ -72,4 +72,17 @@ public interface HttpClientHelpers {
             return failedFuture(new RequestException(response.statusCode(), contentType, buffer.toString()));
         });
     }
+
+    static boolean statusCode(HttpClientResponse response, int expected) {
+        return response.statusCode() == expected;
+    }
+
+    static boolean statusCode(HttpClientResponse response, int... allowed) {
+        for (int status : allowed) {
+            if (response.statusCode() == status) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

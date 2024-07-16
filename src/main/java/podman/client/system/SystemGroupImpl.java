@@ -2,6 +2,7 @@ package podman.client.system;
 
 import static io.vertx.core.Future.succeededFuture;
 import static io.vertx.uritemplate.Variables.variables;
+import static podman.internal.HttpClientHelpers.statusCode;
 
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
@@ -34,7 +35,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(state.socketAddress())
                 .setURI(VERSION_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                state.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
 
@@ -48,7 +49,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(state.socketAddress())
                 .setURI(INFO_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                state.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
 
@@ -62,7 +63,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(state.socketAddress())
                 .setURI(DF_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                state.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
 
@@ -76,7 +77,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(state.socketAddress())
                 .setURI(PING_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                state.httpClient(), options, response -> response.statusCode() == 200, response -> {
+                state.httpClient(), options, response -> statusCode(response, 200), response -> {
                     JsonObject result = new JsonObject();
                     response.headers().forEach(result::put);
                     return succeededFuture(result);
@@ -95,7 +96,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(state.socketAddress())
                 .setURI(uri);
         return HttpClientHelpers.makeSimplifiedRequest(
-                state.httpClient(), options, response -> response.statusCode() == 200, response -> response.body()
+                state.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
 
@@ -112,7 +113,7 @@ public class SystemGroupImpl implements SystemGroup {
         return HttpClientHelpers.makeSimplifiedRequest(
                 state.httpClient(),
                 options,
-                response -> response.statusCode() == 200,
+                response -> statusCode(response, 200),
                 response -> succeededFuture(JsonParser.newParser(response).objectValueMode()));
     }
 }
