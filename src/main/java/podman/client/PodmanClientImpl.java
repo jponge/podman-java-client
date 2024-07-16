@@ -1,10 +1,10 @@
 package podman.client;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.net.SocketAddress;
-import io.vertx.ext.web.client.WebClient;
 import podman.client.secrets.SecretsGroup;
 import podman.client.secrets.SecretsGroupImpl;
 import podman.client.system.SystemGroup;
@@ -21,13 +21,12 @@ class PodmanClientImpl implements PodmanClient {
         SocketAddress socketAddress = SocketAddress.domainSocketAddress(options.getSocketPath());
         HttpClient httpClient = vertx.createHttpClient(
                 new HttpClientOptions().setDefaultHost("localhost").setDefaultPort(9999));
-        WebClient webClient = WebClient.wrap(httpClient);
-        this.state = new ClientState(vertx, options, socketAddress, httpClient, webClient);
+        this.state = new ClientState(vertx, options, socketAddress, httpClient);
     }
 
     @Override
-    public void close() {
-        state.webClient().close();
+    public Future<Void> close() {
+        return state.httpClient().close();
     }
 
     @Override

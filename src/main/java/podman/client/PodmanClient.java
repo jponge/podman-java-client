@@ -1,5 +1,6 @@
 package podman.client;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import podman.client.secrets.SecretsGroup;
 import podman.client.system.SystemGroup;
@@ -41,7 +42,7 @@ public interface PodmanClient {
         return new PodmanClientImpl(vertx, options);
     }
 
-    void close();
+    Future<Void> close();
 
     SystemGroup system();
 

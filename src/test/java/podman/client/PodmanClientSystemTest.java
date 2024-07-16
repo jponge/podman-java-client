@@ -35,8 +35,8 @@ class PodmanClientSystemTest {
     }
 
     @AfterEach
-    void cleanup() {
-        client.close();
+    void cleanup() throws Throwable {
+        awaitResult(client.close());
     }
 
     @BeforeAll

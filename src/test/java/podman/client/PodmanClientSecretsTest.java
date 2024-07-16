@@ -38,7 +38,7 @@ public class PodmanClientSecretsTest {
 
     @AfterAll
     void cleanup() throws Throwable {
-        client.close();
+        awaitResult(client.close());
         awaitResult(vertx.close());
     }
 
