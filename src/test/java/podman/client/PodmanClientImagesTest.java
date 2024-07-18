@@ -44,7 +44,7 @@ public class PodmanClientImagesTest {
     }
 
     @Test
-    void pullExistingImage() {
+    void pullExistingImage() throws Throwable {
         Flow.Publisher<JsonObject> pull = client.images().pull(PODMAN_HELLO_REF, new ImagePullOptions());
         AssertSubscriber<JsonObject> sub = AssertSubscriber.create(Long.MAX_VALUE);
         pull.subscribe(sub);
@@ -60,6 +60,15 @@ public class PodmanClientImagesTest {
                 .matches(event -> event.containsKey("images")
                         && event.containsKey("id")
                         && !event.getJsonArray("images").isEmpty());
+
+        String imageId = events.getLast().getString("id");
+        assertThat(awaitResult(client.images().exists(imageId))).isTrue();
+    }
+
+    @Test
+    void bogusImageDoesNotExist() throws Throwable {
+        String imageId = "this-does-not-exist-unless-you-created-such-an-image-name-but-then-what-can-i-do";
+        assertThat(awaitResult(client.images().exists(imageId))).isFalse();
     }
 
     @Test
