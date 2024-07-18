@@ -44,7 +44,7 @@ public class PodmanClientImagesTest {
     }
 
     @Test
-    void pullExistingImage() throws Throwable {
+    void pullExistingImage() {
         Flow.Publisher<JsonObject> pull = client.images().pull(PODMAN_HELLO_REF, new ImagePullOptions());
         AssertSubscriber<JsonObject> sub = AssertSubscriber.create(Long.MAX_VALUE);
         pull.subscribe(sub);
@@ -60,5 +60,43 @@ public class PodmanClientImagesTest {
                 .matches(event -> event.containsKey("images")
                         && event.containsKey("id")
                         && !event.getJsonArray("images").isEmpty());
+    }
+
+    @Test
+    void pullNonExistingImage() {
+        Flow.Publisher<JsonObject> pull = client.images().pull(NOT_FOUND_REF, new ImagePullOptions());
+        AssertSubscriber<JsonObject> sub = AssertSubscriber.create(Long.MAX_VALUE);
+        pull.subscribe(sub);
+
+        sub.awaitCompletion().assertCompleted();
+        List<JsonObject> events = sub.getItems();
+
+        assertThat(events)
+                .first()
+                .matches(event ->
+                        event.containsKey("stream") && event.getString("stream").contains(("Trying to pull")));
+        assertThat(events)
+                .last()
+                .matches(event ->
+                        event.containsKey("error") && event.getString("error").contains(("unauthorized")));
+    }
+
+    @Test
+    void pullFromNonReachableRegistry() {
+        Flow.Publisher<JsonObject> pull = client.images().pull(NOT_REACHABLE_REF, new ImagePullOptions());
+        AssertSubscriber<JsonObject> sub = AssertSubscriber.create(Long.MAX_VALUE);
+        pull.subscribe(sub);
+
+        sub.awaitCompletion().assertCompleted();
+        List<JsonObject> events = sub.getItems();
+
+        assertThat(events)
+                .first()
+                .matches(event ->
+                        event.containsKey("stream") && event.getString("stream").contains(("Trying to pull")));
+        assertThat(events)
+                .last()
+                .matches(event ->
+                        event.containsKey("error") && event.getString("error").contains(("no such host")));
     }
 }
