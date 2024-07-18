@@ -13,14 +13,14 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.uritemplate.UriTemplate;
 import io.vertx.uritemplate.Variables;
 import podman.client.JsonFilters;
-import podman.internal.ClientState;
+import podman.internal.ClientContext;
 
 public class SecretsGroupImpl implements SecretsGroup {
 
-    private final ClientState state;
+    private final ClientContext context;
 
-    public SecretsGroupImpl(ClientState state) {
-        this.state = state;
+    public SecretsGroupImpl(ClientContext context) {
+        this.context = context;
     }
 
     private static final UriTemplate CREATE_TPL =
@@ -29,13 +29,13 @@ public class SecretsGroupImpl implements SecretsGroup {
     @Override
     public Future<JsonObject> create(String name, String data, SecretCreateOptions options) {
         Variables vars =
-                variables().set("base", state.options().getApiVersion()).set("name", name);
+                variables().set("base", context.options().getApiVersion()).set("name", name);
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.POST)
-                .setServer(state.socketAddress())
+                .setServer(context.socketAddress())
                 .setURI(CREATE_TPL.expandToString(options.fillQueryParams(vars)));
         return makeSimplifiedRequestWithPayload(
-                state.httpClient(),
+                context.httpClient(),
                 requestOptions,
                 Buffer.buffer(data),
                 response -> statusCode(response, 200, 201),
@@ -47,13 +47,13 @@ public class SecretsGroupImpl implements SecretsGroup {
     @Override
     public Future<Void> remove(String name) {
         Variables vars =
-                variables().set("base", state.options().getApiVersion()).set("name", name);
+                variables().set("base", context.options().getApiVersion()).set("name", name);
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.DELETE)
-                .setServer(state.socketAddress())
+                .setServer(context.socketAddress())
                 .setURI(REMOVE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                state.httpClient(),
+                context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204),
                 response -> response.body().mapEmpty());
@@ -64,13 +64,13 @@ public class SecretsGroupImpl implements SecretsGroup {
     @Override
     public Future<Boolean> exists(String name) {
         Variables vars =
-                variables().set("base", state.options().getApiVersion()).set("name", name);
+                variables().set("base", context.options().getApiVersion()).set("name", name);
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.GET)
-                .setServer(state.socketAddress())
+                .setServer(context.socketAddress())
                 .setURI(EXISTS_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                state.httpClient(),
+                context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204, 404),
                 response -> succeededFuture(response.statusCode() != 404));
@@ -81,15 +81,15 @@ public class SecretsGroupImpl implements SecretsGroup {
     @Override
     public Future<JsonObject> inspect(String name, boolean showSecret) {
         Variables vars = variables()
-                .set("base", state.options().getApiVersion())
+                .set("base", context.options().getApiVersion())
                 .set("name", name)
                 .set("showsecret", String.valueOf(showSecret));
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.GET)
-                .setServer(state.socketAddress())
+                .setServer(context.socketAddress())
                 .setURI(INSPECT_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                state.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
+                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
 
@@ -98,14 +98,14 @@ public class SecretsGroupImpl implements SecretsGroup {
     @Override
     public Future<JsonArray> list(JsonFilters filters) {
         Variables vars = variables()
-                .set("base", state.options().getApiVersion())
+                .set("base", context.options().getApiVersion())
                 .set("filters", filters.json().encode());
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.GET)
-                .setServer(state.socketAddress())
+                .setServer(context.socketAddress())
                 .setURI(LIST_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                state.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
+                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonArray));
     }
 }
