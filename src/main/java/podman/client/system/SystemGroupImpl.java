@@ -104,6 +104,7 @@ public class SystemGroupImpl implements SystemGroup {
 
     @Override
     public Future<ReadStream<JsonEvent>> getEvents(SystemGetEventsOptions getEventsOptions) {
+        // TODO rewrite to Publisher
         if (!context.isCalledFromEventLoop()) {
             return context.accessingStreamOutsideEventLoop();
         }
