@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.parsetools.JsonEvent;
-import io.vertx.core.streams.ReadStream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import podman.client.system.SystemGetEventsOptions;
 import podman.client.system.SystemPruneOptions;
 import podman.machine.PodmanMachineClient;
 
@@ -110,12 +107,12 @@ class PodmanClientSystemTest {
     @Test
     @Disabled
     void getEvents() throws Throwable {
-        SystemGetEventsOptions getEventsOptions = new SystemGetEventsOptions();
-        ReadStream<JsonEvent> stream = awaitResult(client.system().getEvents(getEventsOptions));
-        stream.handler(event -> {
-            System.out.println(event.type());
-            System.out.println(event.objectValue().encodePrettily());
-        });
+        //        SystemGetEventsOptions getEventsOptions = new SystemGetEventsOptions();
+        //        ReadStream<JsonEvent> stream = awaitResult(client.system().getEvents(getEventsOptions));
+        //        stream.handler(event -> {
+        //            System.out.println(event.type());
+        //            System.out.println(event.objectValue().encodePrettily());
+        //        });
         // TODO revisit to check for events when we have image creation / pull APIs
         //        awaitResult(client.system().prune(new SystemPruneOptions()));
         //        awaitResult(client.system().ping());

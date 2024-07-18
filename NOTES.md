@@ -16,6 +16,4 @@ The Vert.x core HTTP client is used to make calls to the Podman API.
 Some operations on this client such as setting data handlers are very thread sensitive, or data can be corrupted / lost.
 
 - Most one-shot operations (e.g., `Future<JsonObject>`-returning API methods) can work fine when called from _any_ thread, because body handlers are set from a Vert.x event-loop thread.
-- `ReadStream`-providing methods will need to be called from a Vert.x event-loop thread, and the client will check which thread is being called.
-
-Note that we _might hypothetically_ get around the `ReadStream` limitation by implementing a `ReadWriteStream` adapter that would be a `WriteStream` for a `HttpClientResponse` pipe, and a `ReadStream` for the outside.
+- `Flow.Publisher`-providing methods can be called from any thread, because the `ReadStream` handler setting is done on an event-loop thread by construction with Mutiny Zero, not by end user code.

@@ -11,9 +11,11 @@ import io.vertx.core.http.RequestOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.parsetools.JsonEvent;
 import io.vertx.core.parsetools.JsonParser;
-import io.vertx.core.streams.ReadStream;
 import io.vertx.uritemplate.UriTemplate;
 import io.vertx.uritemplate.Variables;
+import java.util.concurrent.Flow;
+import mutiny.zero.operators.Transform;
+import mutiny.zero.vertxpublishers.VertxPublisher;
 import podman.internal.ClientContext;
 import podman.internal.HttpClientHelpers;
 
@@ -103,21 +105,20 @@ public class SystemGroupImpl implements SystemGroup {
     private static final UriTemplate EVENTS_TPL = UriTemplate.of("/{base}/libpod/events{?filters,stream,since,until}");
 
     @Override
-    public Future<ReadStream<JsonEvent>> getEvents(SystemGetEventsOptions getEventsOptions) {
-        // TODO rewrite to Publisher
-        if (!context.isCalledFromEventLoop()) {
-            return context.accessingStreamOutsideEventLoop();
-        }
+    public Flow.Publisher<JsonObject> getEvents(SystemGetEventsOptions getEventsOptions) {
         Variables vars = variables().set("base", context.options().getApiVersion());
         String uri = EVENTS_TPL.expandToString(getEventsOptions.fillQueryParams(vars));
         RequestOptions options = new RequestOptions()
                 .setMethod(HttpMethod.GET)
                 .setServer(context.socketAddress())
                 .setURI(uri);
-        return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(),
-                options,
-                response -> statusCode(response, 200),
-                response -> succeededFuture(JsonParser.newParser(response).objectValueMode()));
+        return new Transform<>(
+                VertxPublisher.fromFuture(() -> HttpClientHelpers.makeSimplifiedRequest(
+                        context.httpClient(), options, response -> statusCode(response, 200), response -> {
+                            response.pause();
+                            return succeededFuture(
+                                    JsonParser.newParser(response).objectValueMode());
+                        })),
+                JsonEvent::objectValue);
     }
 }

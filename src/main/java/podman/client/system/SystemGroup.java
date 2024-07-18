@@ -2,8 +2,7 @@ package podman.client.system;
 
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.parsetools.JsonEvent;
-import io.vertx.core.streams.ReadStream;
+import java.util.concurrent.Flow;
 
 public interface SystemGroup {
 
@@ -17,5 +16,5 @@ public interface SystemGroup {
 
     Future<JsonObject> prune(SystemPruneOptions pruneOptions);
 
-    Future<ReadStream<JsonEvent>> getEvents(SystemGetEventsOptions getEventsOptions);
+    Flow.Publisher<JsonObject> getEvents(SystemGetEventsOptions getEventsOptions);
 }
