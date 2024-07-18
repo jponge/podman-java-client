@@ -1,11 +1,9 @@
 package podman.client.images;
 
-import io.vertx.core.Future;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.parsetools.JsonEvent;
-import io.vertx.core.streams.ReadStream;
+import io.vertx.core.json.JsonObject;
+import java.util.concurrent.Flow;
 
 public interface ImagesGroup {
 
-    Future<ReadStream<JsonEvent>> pull(String reference, ImagePullOptions imagePullOptions);
+    Flow.Publisher<JsonObject> pull(String reference, ImagePullOptions imagePullOptions);
 }

@@ -22,6 +22,8 @@
         <awaitility.version>4.2.1</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
+        <mutiny-zero.version>1.1.1-SNAPSHOT</mutiny-zero.version>
+        <mutiny.version>2.6.2</mutiny.version>
     </properties>
 
     <dependencyManagement>
@@ -58,6 +60,11 @@
             <version>${zt-exec.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>mutiny-zero-vertx-publishers</artifactId>
+            <version>${mutiny-zero.version}</version>
+        </dependency>
+        <dependency>
             <!-- FIXME (hack around macOS netty-resolver-dns-native-macos and netty-transport-native-kqueue) -->
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -78,6 +85,12 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>mutiny</artifactId>
+            <version>${mutiny.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
