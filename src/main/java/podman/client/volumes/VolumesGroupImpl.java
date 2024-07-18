@@ -31,6 +31,7 @@ public class VolumesGroupImpl implements VolumesGroup {
         RequestOptions requestOptions = new RequestOptions()
                 .setMethod(HttpMethod.POST)
                 .setServer(context.socketAddress())
+                .addHeader("Content-Type", "application/json")
                 .setURI(CREATE_TPL.expandToString(vars));
         return makeSimplifiedRequestWithPayload(
                 context.httpClient(),
