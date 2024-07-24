@@ -9,6 +9,10 @@ Complex JSON trees can be queried with `JsonPointer`.
 
 The `machine` classes provide wrapper result types that offer methods to access specific entries either by key, or using `JsonPointer` queries, while still providing raw access to the decorated `JsonObject`. 
 
+Most option passing data types such as `SecretCreateOptions` can be POJO with a few fields and helper methods to fill HTTP request parameters, or convert to a JSON type.
+There are however a few _huge_ Podman types such as `ImageCreateOptions` where there would be too many fields and subtypes.
+In such a case a more sensible design is to hold a `JsonObject` field, and (fluent) methods gradually contribute to forming the eventual payload.
+
 ## Threading assumptions
 
 The Vert.x core HTTP client is used to make calls to the Podman API.
