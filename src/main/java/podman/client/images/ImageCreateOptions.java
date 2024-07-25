@@ -1,5 +1,6 @@
 package podman.client.images;
 
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
@@ -309,11 +310,7 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record ImageVolume(
-            String destination,
-            boolean readWrite,
-            String source
-    ) {}
+    public record ImageVolume(String destination, boolean readWrite, String source) {}
 
     public ImageCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
         JsonArray array = new JsonArray();
@@ -342,20 +339,21 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions intelRdt(String closId, boolean enableCMT, boolean enableMBM, String l3CacheSchema, String memBwSchema) {
-        payload.put("intelRdt", new JsonObject()
-                .put("closID", closId)
-                .put("enableCMT", enableCMT)
-                .put("enableMBM", enableMBM)
-                .put("l3CacheSchema", l3CacheSchema)
-                .put("memBwSchema", memBwSchema));
+    public ImageCreateOptions intelRdt(
+            String closId, boolean enableCMT, boolean enableMBM, String l3CacheSchema, String memBwSchema) {
+        payload.put(
+                "intelRdt",
+                new JsonObject()
+                        .put("closID", closId)
+                        .put("enableCMT", enableCMT)
+                        .put("enableMBM", enableMBM)
+                        .put("l3CacheSchema", l3CacheSchema)
+                        .put("memBwSchema", memBwSchema));
         return this;
     }
 
     public ImageCreateOptions ipcns(String nsmode, String value) {
-        payload.put("ipcns", new JsonObject()
-                .put("nsmode", nsmode)
-                .put("value", value));
+        payload.put("ipcns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
@@ -371,5 +369,248 @@ public class ImageCreateOptions {
         return this;
     }
 
+    public ImageCreateOptions logConfiguration(String driver, Map<String, String> options, String path, long size) {
+        JsonObject map = new JsonObject();
+        map.put("driver", driver).put("path", path).put("size", size);
+        JsonObject opts = new JsonObject();
+        options.forEach(opts::put);
+        map.put("options", opts);
+        payload.put("log_configuration", map);
+        return this;
+    }
 
+    public ImageCreateOptions managePassword(boolean managePassword) {
+        payload.put("manage_password", managePassword);
+        return this;
+    }
+
+    public ImageCreateOptions mask(List<String> mask) {
+        payload.put("mask", new JsonArray(mask));
+        return this;
+    }
+
+    public record Mount(
+            BindOptions bindOptions,
+            String consistency,
+            boolean readOnly,
+            String source,
+            String target,
+            TmpfsOptions tmpfsOptions,
+            String type,
+            VolumeOptions volumeOptions) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("BindOptions", bindOptions.json())
+                    .put("ClusterOptions", new JsonObject()) // this one is an empty Go struct...
+                    .put("Consistency", consistency)
+                    .put("ReadOnly", readOnly)
+                    .put("Source", source)
+                    .put("Target", target)
+                    .put("TmpfsOptions", tmpfsOptions.json())
+                    .put("Type", type)
+                    .put("VolumeOptions", volumeOptions.json());
+        }
+    }
+
+    public record BindOptions(
+            boolean createMountPoint,
+            boolean nonRecursive,
+            String propagation,
+            boolean readOnlyForceRecursive,
+            boolean readOnlyNonRecursive) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("CreateMountPoint", createMountPoint)
+                    .put("NonRecursive", nonRecursive)
+                    .put("Propagation", propagation)
+                    .put("ReadOnlyForceRecursive", readOnlyForceRecursive)
+                    .put("ReadOnlyNonRecursive", readOnlyNonRecursive);
+        }
+    }
+
+    public record TmpfsOptions(int mode, long sizeBytes) {
+        public JsonObject json() {
+            return new JsonObject().put("Mode", mode).put("SizeBytes", sizeBytes);
+        }
+    }
+
+    public record VolumeOptions(DriverConfig driverConfig, Map<String, String> labels, boolean noCopy) {
+        public JsonObject json() {
+            JsonObject map = new JsonObject();
+            labels.forEach(map::put);
+            return new JsonObject()
+                    .put("DriverConfig", driverConfig.json())
+                    .put("Labels", map)
+                    .put("NoCopy", noCopy);
+        }
+    }
+
+    public record DriverConfig(String name, Map<String, String> options) {
+        public JsonObject json() {
+            JsonObject map = new JsonObject();
+            options.forEach(map::put);
+            return new JsonObject().put("Name", name).put("Options", map);
+        }
+    }
+
+    public ImageCreateOptions mounts(List<Mount> mounts) {
+        JsonArray array = mounts.stream().map(Mount::json).collect(JsonArray::new, JsonArray::add, JsonArray::addAll);
+        payload.put("mounts", array);
+        return this;
+    }
+
+    public ImageCreateOptions name(String name) {
+        payload.put("name", name);
+        return this;
+    }
+
+    public ImageCreateOptions netns(String nsmode, String value) {
+        payload.put("netns", new JsonObject().put("nsmode", nsmode).put("value", value));
+        return this;
+    }
+
+    public ImageCreateOptions networkOptions(Map<String, List<String>> options) {
+        JsonObject map = new JsonObject();
+        options.forEach((prop, opts) -> map.put(prop, new JsonArray(opts)));
+        payload.put("network_options", map);
+        return this;
+    }
+
+    public record PerNetworkOptions(List<String> aliases,
+                                    String interfaceName,
+                                    List<String> staticIps,
+                                    String staticMac) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("aliases", new JsonArray(aliases))
+                    .put("interface_name", interfaceName)
+                    .put("static_ips", new JsonArray(staticIps))
+                    .put("static_mac", staticMac);
+        }
+    }
+
+    public ImageCreateOptions networks(Map<String, PerNetworkOptions> networks) {
+        JsonObject map = new JsonObject();
+        networks.forEach((prop, opts) -> map.put(prop, opts.json()));
+        payload.put("Networks", map);
+        return this;
+    }
+
+    public ImageCreateOptions noNewPrivileges(boolean noNewPrivileges) {
+        payload.put("no_new_privileges", noNewPrivileges);
+        return this;
+    }
+
+    public ImageCreateOptions ociRuntime(String ociRuntime) {
+        payload.put("oci_runtime", ociRuntime);
+        return this;
+    }
+
+    public ImageCreateOptions oomScoreAdj(long oomScoreAdj) {
+        payload.put("oom_score_adj", oomScoreAdj);
+        return this;
+    }
+
+    public record OverlayVolume(String destination, List<String> options, String source) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("destination", destination)
+                    .put("options", new JsonArray(options))
+                    .put("source", source);
+        }
+    }
+
+    public ImageCreateOptions overlayVolumes(List<OverlayVolume> volumes) {
+        payload.put("overlay_volumes", new JsonArray(volumes.stream().map(OverlayVolume::json).toList()));
+        return this;
+    }
+
+    public ImageCreateOptions passwdEntry(String passwdEntry) {
+        payload.put("passwd_entry", passwdEntry);
+        return this;
+    }
+
+    public ImageCreateOptions personality(String domain, List<String> flags) {
+        payload.put("personality", new JsonObject().put("domain", domain).put("flags", new JsonArray(flags)));
+        return this;
+    }
+
+    public ImageCreateOptions pidns(String nsmode, String value) {
+        payload.put("pidns", new JsonObject().put("nsmode", nsmode).put("value", value));
+        return this;
+    }
+
+    public ImageCreateOptions pod(String name) {
+        payload.put("pod", name);
+        return this;
+    }
+
+    public record PortMapping(int containerPort,
+                              String hostIp,
+                              int hostPort,
+                              String protocol,
+                              int range) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("container_port", containerPort)
+                    .put("host_ip", hostIp)
+                    .put("host_port", hostPort)
+                    .put("protocol", protocol)
+                    .put("range", range);
+        }
+    }
+
+    public ImageCreateOptions portMappings(List<PortMapping> portMappings) {
+        payload.put("portmappings", new JsonArray(portMappings.stream().map(PortMapping::json).toList()));
+        return this;
+    }
+
+    public ImageCreateOptions privileged(boolean privileged) {
+        payload.put("privileged", privileged);
+        return this;
+    }
+
+    public ImageCreateOptions procfsOpts(List<String> procfsOpts) {
+        payload.put("procfs_opts", new JsonArray(procfsOpts));
+        return this;
+    }
+
+    public ImageCreateOptions publishImagePorts(boolean publishImagePorts) {
+        payload.put("publish_image_ports", publishImagePorts);
+        return this;
+    }
+
+    public record POSIXRlimit(long hard, long soft, String type) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("hard", hard)
+                    .put("soft", soft)
+                    .put("type", type);
+        }
+    }
+
+    public ImageCreateOptions rLimits(List<POSIXRlimit> rLimits) {
+        payload.put("r_limits", new JsonArray(rLimits.stream().map(POSIXRlimit::json).toList()));
+        return this;
+    }
+
+    public ImageCreateOptions rawImageName(String rawImageName) {
+        payload.put("raw_image_name", rawImageName);
+        return this;
+    }
+
+    public ImageCreateOptions readOnlyFilesystem(boolean readOnlyFilesystem) {
+        payload.put("read_only_filesystem", readOnlyFilesystem);
+        return this;
+    }
+
+    public ImageCreateOptions readWriteTmpfs(boolean readWriteTmpfs) {
+        payload.put("read_write_tmpfs", readWriteTmpfs);
+        return this;
+    }
+
+    public ImageCreateOptions remove(boolean remove) {
+        payload.put("remove", remove);
+        return this;
+    }
 }
