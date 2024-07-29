@@ -1,11 +1,11 @@
-package podman.client.images;
+package podman.client.containers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.List;
 import java.util.Map;
 
-public class ImageCreateOptions {
+public class ContainerCreateOptions {
 
     private final JsonObject payload = new JsonObject();
 
@@ -13,79 +13,79 @@ public class ImageCreateOptions {
         return payload;
     }
 
-    public ImageCreateOptions annotations(Map<String, String> annotations) {
+    public ContainerCreateOptions annotations(Map<String, String> annotations) {
         JsonObject map = new JsonObject();
         annotations.forEach(map::put);
         payload.put("annotations", map);
         return this;
     }
 
-    public ImageCreateOptions apparmorProfile(String profile) {
+    public ContainerCreateOptions apparmorProfile(String profile) {
         payload.put("apparmor_profile", profile);
         return this;
     }
 
-    public ImageCreateOptions baseHostsFile(String baseHostsFile) {
+    public ContainerCreateOptions baseHostsFile(String baseHostsFile) {
         payload.put("base_hosts_file", baseHostsFile);
         return this;
     }
 
-    public ImageCreateOptions capAdd(List<String> capabilities) {
+    public ContainerCreateOptions capAdd(List<String> capabilities) {
         payload.put("cap_add", new JsonArray(capabilities));
         return this;
     }
 
-    public ImageCreateOptions capDrop(List<String> capabilities) {
+    public ContainerCreateOptions capDrop(List<String> capabilities) {
         payload.put("cap_drop", new JsonArray(capabilities));
         return this;
     }
 
-    public ImageCreateOptions cgroupParent(String cgroupParent) {
+    public ContainerCreateOptions cgroupParent(String cgroupParent) {
         payload.put("cgroup_parent", cgroupParent);
         return this;
     }
 
-    public ImageCreateOptions cgroupNS(String nsmode, String value) {
+    public ContainerCreateOptions cgroupNS(String nsmode, String value) {
         payload.put("cgroupns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions cgroupsMode(String cgroupsMode) {
+    public ContainerCreateOptions cgroupsMode(String cgroupsMode) {
         payload.put("cgroups_mode", cgroupsMode);
         return this;
     }
 
-    public ImageCreateOptions chrootDirectories(List<String> chrootDirectories) {
+    public ContainerCreateOptions chrootDirectories(List<String> chrootDirectories) {
         payload.put("chroot_directories", new JsonArray(chrootDirectories));
         return this;
     }
 
-    public ImageCreateOptions cniNetworks(List<String> cniNetworks) {
+    public ContainerCreateOptions cniNetworks(List<String> cniNetworks) {
         payload.put("cni_networks", new JsonArray(cniNetworks));
         return this;
     }
 
-    public ImageCreateOptions command(List<String> command) {
+    public ContainerCreateOptions command(List<String> command) {
         payload.put("command", new JsonArray(command));
         return this;
     }
 
-    public ImageCreateOptions conmonPidFile(String conmonPidFile) {
+    public ContainerCreateOptions conmonPidFile(String conmonPidFile) {
         payload.put("conmon_pid_file", conmonPidFile);
         return this;
     }
 
-    public ImageCreateOptions containerCreateCommand(List<String> containerCreateCommand) {
+    public ContainerCreateOptions containerCreateCommand(List<String> containerCreateCommand) {
         payload.put("containerCreateCommand", new JsonArray(containerCreateCommand));
         return this;
     }
 
-    public ImageCreateOptions createWorkingDir(boolean createWorkingDir) {
+    public ContainerCreateOptions createWorkingDir(boolean createWorkingDir) {
         payload.put("create_working_dir", createWorkingDir);
         return this;
     }
 
-    public ImageCreateOptions dependencyContainers(List<String> dependencyContainers) {
+    public ContainerCreateOptions dependencyContainers(List<String> dependencyContainers) {
         payload.put("dependencyContainers", new JsonArray(dependencyContainers));
         return this;
     }
@@ -101,7 +101,7 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions deviceCgroupRule(List<LinuxDeviceCgroup> deviceCgroupRules) {
+    public ContainerCreateOptions deviceCgroupRule(List<LinuxDeviceCgroup> deviceCgroupRules) {
         payload.put(
                 "device_cgroup_rule",
                 new JsonArray(
@@ -122,74 +122,74 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions devices(List<LinuxDevice> devices) {
+    public ContainerCreateOptions devices(List<LinuxDevice> devices) {
         payload.put(
                 "devices", new JsonArray(devices.stream().map(LinuxDevice::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions devicesFrom(List<String> devices) {
+    public ContainerCreateOptions devicesFrom(List<String> devices) {
         payload.put("devices_from", new JsonArray(devices));
         return this;
     }
 
-    public ImageCreateOptions dnsOption(List<String> dnsOptions) {
+    public ContainerCreateOptions dnsOption(List<String> dnsOptions) {
         payload.put("dns_option", new JsonArray(dnsOptions));
         return this;
     }
 
-    public ImageCreateOptions dnsSearch(List<String> dnsSearch) {
+    public ContainerCreateOptions dnsSearch(List<String> dnsSearch) {
         payload.put("dns_search", new JsonArray(dnsSearch));
         return this;
     }
 
-    public ImageCreateOptions dnsServer(List<String> dnsServer) {
+    public ContainerCreateOptions dnsServer(List<String> dnsServer) {
         payload.put("dns_server", new JsonArray(dnsServer));
         return this;
     }
 
-    public ImageCreateOptions entrypoint(List<String> entrypoint) {
+    public ContainerCreateOptions entrypoint(List<String> entrypoint) {
         payload.put("entrypoint", new JsonArray(entrypoint));
         return this;
     }
 
-    public ImageCreateOptions env(Map<String, String> env) {
+    public ContainerCreateOptions env(Map<String, String> env) {
         JsonObject map = new JsonObject();
         env.forEach(map::put);
         payload.put("env", map);
         return this;
     }
 
-    public ImageCreateOptions envHost(boolean envHost) {
+    public ContainerCreateOptions envHost(boolean envHost) {
         payload.put("env_host", envHost);
         return this;
     }
 
-    public ImageCreateOptions expose(Map<Integer, String> ports) {
+    public ContainerCreateOptions expose(Map<Integer, String> ports) {
         JsonObject map = new JsonObject();
         ports.forEach((port, value) -> map.put(String.valueOf(port), value));
         payload.put("expose", map);
         return this;
     }
 
-    public ImageCreateOptions groupEntry(String groupEntry) {
+    public ContainerCreateOptions groupEntry(String groupEntry) {
         payload.put("group_entry", groupEntry);
         return this;
     }
 
-    public ImageCreateOptions groups(List<String> groups) {
+    public ContainerCreateOptions groups(List<String> groups) {
         JsonArray array = new JsonArray();
         groups.forEach(array::add);
         payload.put("groups", array);
         return this;
     }
 
-    public ImageCreateOptions healthCheckOnFailureAction(long action) {
+    public ContainerCreateOptions healthCheckOnFailureAction(long action) {
         payload.put("health_check_on_failure_action", action);
         return this;
     }
 
-    public ImageCreateOptions healthConfig(
+    public ContainerCreateOptions healthConfig(
             long interval, long retries, long startPeriod, List<String> test, long timeout) {
         payload.put(
                 "healthconfig",
@@ -202,7 +202,7 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions hostDeviceList(List<LinuxDevice> hostDeviceList) {
+    public ContainerCreateOptions hostDeviceList(List<LinuxDevice> hostDeviceList) {
         JsonArray array = new JsonArray();
         hostDeviceList.forEach(device -> array.add(new JsonObject()
                 .put("fileMode", device.fileMode)
@@ -216,22 +216,22 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions hostAdd(List<String> hosts) {
+    public ContainerCreateOptions hostAdd(List<String> hosts) {
         payload.put("hostadd", new JsonArray(hosts));
         return this;
     }
 
-    public ImageCreateOptions hostname(String hostname) {
+    public ContainerCreateOptions hostname(String hostname) {
         payload.put("hostname", hostname);
         return this;
     }
 
-    public ImageCreateOptions hostUsers(List<String> users) {
+    public ContainerCreateOptions hostUsers(List<String> users) {
         payload.put("hostusers", new JsonArray(users));
         return this;
     }
 
-    public ImageCreateOptions httpProxy(boolean httpProxy) {
+    public ContainerCreateOptions httpProxy(boolean httpProxy) {
         payload.put("httpproxy", httpProxy);
         return this;
     }
@@ -271,7 +271,7 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions idMappings(
+    public ContainerCreateOptions idMappings(
             boolean autoUserNs,
             AutoUserNsOptions autoUserNsOpts,
             IDMap gidMap,
@@ -288,34 +288,34 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions image(String image) {
+    public ContainerCreateOptions image(String image) {
         payload.put("image", image);
         return this;
     }
 
-    public ImageCreateOptions imageArch(String arch) {
+    public ContainerCreateOptions imageArch(String arch) {
         payload.put("image_arch", arch);
         return this;
     }
 
-    public ImageCreateOptions imageOs(String os) {
+    public ContainerCreateOptions imageOs(String os) {
         payload.put("image_os", os);
         return this;
     }
 
-    public ImageCreateOptions imageVariant(String variant) {
+    public ContainerCreateOptions imageVariant(String variant) {
         payload.put("image_variant", variant);
         return this;
     }
 
-    public ImageCreateOptions imageVolumeMode(String mode) {
+    public ContainerCreateOptions imageVolumeMode(String mode) {
         payload.put("image_volume_mode", mode);
         return this;
     }
 
     public record ImageVolume(String destination, boolean readWrite, String source) {}
 
-    public ImageCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
+    public ContainerCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
         JsonArray array = new JsonArray();
         for (ImageVolume volume : imageVolumes) {
             array.add(new JsonObject()
@@ -327,22 +327,22 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions init(boolean init) {
+    public ContainerCreateOptions init(boolean init) {
         payload.put("init", init);
         return this;
     }
 
-    public ImageCreateOptions initContainerType(String initContainerType) {
+    public ContainerCreateOptions initContainerType(String initContainerType) {
         payload.put("init_container_type", initContainerType);
         return this;
     }
 
-    public ImageCreateOptions initPath(String initPath) {
+    public ContainerCreateOptions initPath(String initPath) {
         payload.put("init_path", initPath);
         return this;
     }
 
-    public ImageCreateOptions intelRdt(
+    public ContainerCreateOptions intelRdt(
             String closId, boolean enableCMT, boolean enableMBM, String l3CacheSchema, String memBwSchema) {
         payload.put(
                 "intelRdt",
@@ -355,24 +355,24 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions ipcns(String nsmode, String value) {
+    public ContainerCreateOptions ipcns(String nsmode, String value) {
         payload.put("ipcns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions labelNested(boolean labelNested) {
+    public ContainerCreateOptions labelNested(boolean labelNested) {
         payload.put("label_nested", labelNested);
         return this;
     }
 
-    public ImageCreateOptions labels(Map<String, String> labels) {
+    public ContainerCreateOptions labels(Map<String, String> labels) {
         JsonObject map = new JsonObject();
         labels.forEach(map::put);
         payload.put("labels", map);
         return this;
     }
 
-    public ImageCreateOptions logConfiguration(String driver, Map<String, String> options, String path, long size) {
+    public ContainerCreateOptions logConfiguration(String driver, Map<String, String> options, String path, long size) {
         JsonObject map = new JsonObject();
         map.put("driver", driver).put("path", path).put("size", size);
         JsonObject opts = new JsonObject();
@@ -382,12 +382,12 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions managePassword(boolean managePassword) {
+    public ContainerCreateOptions managePassword(boolean managePassword) {
         payload.put("manage_password", managePassword);
         return this;
     }
 
-    public ImageCreateOptions mask(List<String> mask) {
+    public ContainerCreateOptions mask(List<String> mask) {
         payload.put("mask", new JsonArray(mask));
         return this;
     }
@@ -456,23 +456,23 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions mounts(List<Mount> mounts) {
+    public ContainerCreateOptions mounts(List<Mount> mounts) {
         JsonArray array = mounts.stream().map(Mount::json).collect(JsonArray::new, JsonArray::add, JsonArray::addAll);
         payload.put("mounts", array);
         return this;
     }
 
-    public ImageCreateOptions name(String name) {
+    public ContainerCreateOptions name(String name) {
         payload.put("name", name);
         return this;
     }
 
-    public ImageCreateOptions netns(String nsmode, String value) {
+    public ContainerCreateOptions netns(String nsmode, String value) {
         payload.put("netns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions networkOptions(Map<String, List<String>> options) {
+    public ContainerCreateOptions networkOptions(Map<String, List<String>> options) {
         JsonObject map = new JsonObject();
         options.forEach((prop, opts) -> map.put(prop, new JsonArray(opts)));
         payload.put("network_options", map);
@@ -490,24 +490,24 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions networks(Map<String, PerNetworkOptions> networks) {
+    public ContainerCreateOptions networks(Map<String, PerNetworkOptions> networks) {
         JsonObject map = new JsonObject();
         networks.forEach((prop, opts) -> map.put(prop, opts.json()));
         payload.put("Networks", map);
         return this;
     }
 
-    public ImageCreateOptions noNewPrivileges(boolean noNewPrivileges) {
+    public ContainerCreateOptions noNewPrivileges(boolean noNewPrivileges) {
         payload.put("no_new_privileges", noNewPrivileges);
         return this;
     }
 
-    public ImageCreateOptions ociRuntime(String ociRuntime) {
+    public ContainerCreateOptions ociRuntime(String ociRuntime) {
         payload.put("oci_runtime", ociRuntime);
         return this;
     }
 
-    public ImageCreateOptions oomScoreAdj(long oomScoreAdj) {
+    public ContainerCreateOptions oomScoreAdj(long oomScoreAdj) {
         payload.put("oom_score_adj", oomScoreAdj);
         return this;
     }
@@ -521,29 +521,29 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions overlayVolumes(List<OverlayVolume> volumes) {
+    public ContainerCreateOptions overlayVolumes(List<OverlayVolume> volumes) {
         payload.put(
                 "overlay_volumes",
                 new JsonArray(volumes.stream().map(OverlayVolume::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions passwdEntry(String passwdEntry) {
+    public ContainerCreateOptions passwdEntry(String passwdEntry) {
         payload.put("passwd_entry", passwdEntry);
         return this;
     }
 
-    public ImageCreateOptions personality(String domain, List<String> flags) {
+    public ContainerCreateOptions personality(String domain, List<String> flags) {
         payload.put("personality", new JsonObject().put("domain", domain).put("flags", new JsonArray(flags)));
         return this;
     }
 
-    public ImageCreateOptions pidns(String nsmode, String value) {
+    public ContainerCreateOptions pidns(String nsmode, String value) {
         payload.put("pidns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions pod(String name) {
+    public ContainerCreateOptions pod(String name) {
         payload.put("pod", name);
         return this;
     }
@@ -559,24 +559,24 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions portMappings(List<PortMapping> portMappings) {
+    public ContainerCreateOptions portMappings(List<PortMapping> portMappings) {
         payload.put(
                 "portmappings",
                 new JsonArray(portMappings.stream().map(PortMapping::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions privileged(boolean privileged) {
+    public ContainerCreateOptions privileged(boolean privileged) {
         payload.put("privileged", privileged);
         return this;
     }
 
-    public ImageCreateOptions procfsOpts(List<String> procfsOpts) {
+    public ContainerCreateOptions procfsOpts(List<String> procfsOpts) {
         payload.put("procfs_opts", new JsonArray(procfsOpts));
         return this;
     }
 
-    public ImageCreateOptions publishImagePorts(boolean publishImagePorts) {
+    public ContainerCreateOptions publishImagePorts(boolean publishImagePorts) {
         payload.put("publish_image_ports", publishImagePorts);
         return this;
     }
@@ -587,29 +587,29 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions rLimits(List<POSIXRlimit> rLimits) {
+    public ContainerCreateOptions rLimits(List<POSIXRlimit> rLimits) {
         payload.put(
                 "r_limits",
                 new JsonArray(rLimits.stream().map(POSIXRlimit::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions rawImageName(String rawImageName) {
+    public ContainerCreateOptions rawImageName(String rawImageName) {
         payload.put("raw_image_name", rawImageName);
         return this;
     }
 
-    public ImageCreateOptions readOnlyFilesystem(boolean readOnlyFilesystem) {
+    public ContainerCreateOptions readOnlyFilesystem(boolean readOnlyFilesystem) {
         payload.put("read_only_filesystem", readOnlyFilesystem);
         return this;
     }
 
-    public ImageCreateOptions readWriteTmpfs(boolean readWriteTmpfs) {
+    public ContainerCreateOptions readWriteTmpfs(boolean readWriteTmpfs) {
         payload.put("read_write_tmpfs", readWriteTmpfs);
         return this;
     }
 
-    public ImageCreateOptions remove(boolean remove) {
+    public ContainerCreateOptions remove(boolean remove) {
         payload.put("remove", remove);
         return this;
     }
@@ -752,7 +752,7 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions resourceLimits(
+    public ContainerCreateOptions resourceLimits(
             LinuxBlockIO blockIO,
             LinuxCPU cpu,
             List<LinuxDeviceCgroup> devices,
@@ -788,52 +788,52 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public ImageCreateOptions restartPolicy(String restartPolicy) {
+    public ContainerCreateOptions restartPolicy(String restartPolicy) {
         payload.put("restart_policy", restartPolicy);
         return this;
     }
 
-    public ImageCreateOptions restartTries(long restartTries) {
+    public ContainerCreateOptions restartTries(long restartTries) {
         payload.put("restart_tries", restartTries);
         return this;
     }
 
-    public ImageCreateOptions rootfs(String rootfs) {
+    public ContainerCreateOptions rootfs(String rootfs) {
         payload.put("rootfs", rootfs);
         return this;
     }
 
-    public ImageCreateOptions rootfsMapping(String rootfsMapping) {
+    public ContainerCreateOptions rootfsMapping(String rootfsMapping) {
         payload.put("rootfs_mapping", rootfsMapping);
         return this;
     }
 
-    public ImageCreateOptions rootfsOverlay(boolean rootfsOverlay) {
+    public ContainerCreateOptions rootfsOverlay(boolean rootfsOverlay) {
         payload.put("rootfs_overlay", rootfsOverlay);
         return this;
     }
 
-    public ImageCreateOptions rootfsPropagation(String rootfsPropagation) {
+    public ContainerCreateOptions rootfsPropagation(String rootfsPropagation) {
         payload.put("rootfs_propagation", rootfsPropagation);
         return this;
     }
 
-    public ImageCreateOptions sdnotifyMode(String sdnotifyMode) {
+    public ContainerCreateOptions sdnotifyMode(String sdnotifyMode) {
         payload.put("sdnotifyMode", sdnotifyMode);
         return this;
     }
 
-    public ImageCreateOptions seccompPolicy(String seccompPolicy) {
+    public ContainerCreateOptions seccompPolicy(String seccompPolicy) {
         payload.put("seccomp_policy", seccompPolicy);
         return this;
     }
 
-    public ImageCreateOptions seccompProfilePath(String seccompProfilePath) {
+    public ContainerCreateOptions seccompProfilePath(String seccompProfilePath) {
         payload.put("seccomp_profile_path", seccompProfilePath);
         return this;
     }
 
-    public ImageCreateOptions secretEnv(Map<String, String> secretEnv) {
+    public ContainerCreateOptions secretEnv(Map<String, String> secretEnv) {
         JsonObject map = new JsonObject();
         secretEnv.forEach(map::put);
         payload.put("secret_env", map);
@@ -846,22 +846,22 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions secrets(List<Secret> secrets) {
+    public ContainerCreateOptions secrets(List<Secret> secrets) {
         payload.put("secrets", new JsonArray(secrets.stream().map(Secret::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions selinuxOpts(List<String> selinuxOpts) {
+    public ContainerCreateOptions selinuxOpts(List<String> selinuxOpts) {
         payload.put("selinux_opts", new JsonArray(selinuxOpts));
         return this;
     }
 
-    public ImageCreateOptions shmSize(long shmSize) {
+    public ContainerCreateOptions shmSize(long shmSize) {
         payload.put("shm_size", shmSize);
         return this;
     }
 
-    public ImageCreateOptions shmSizeSystemd(long shmSizeSystemd) {
+    public ContainerCreateOptions shmSizeSystemd(long shmSizeSystemd) {
         payload.put("shm_size_systemd", shmSizeSystemd);
         return this;
     }
@@ -879,141 +879,141 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions startupHealthConfig(StartupHealthCheck startupHealthCheck) {
+    public ContainerCreateOptions startupHealthConfig(StartupHealthCheck startupHealthCheck) {
         payload.put("startupHealthConfig", startupHealthCheck.json());
         return this;
     }
 
-    public ImageCreateOptions stdin(boolean stdin) {
+    public ContainerCreateOptions stdin(boolean stdin) {
         payload.put("stdin", stdin);
         return this;
     }
 
-    public ImageCreateOptions stopSignal(long stopSignal) {
+    public ContainerCreateOptions stopSignal(long stopSignal) {
         payload.put("stop_signal", stopSignal);
         return this;
     }
 
-    public ImageCreateOptions stopTimeout(long stopTimeout) {
+    public ContainerCreateOptions stopTimeout(long stopTimeout) {
         payload.put("stop_timeout", stopTimeout);
         return this;
     }
 
-    public ImageCreateOptions storageOpts(Map<String, String> storageOpts) {
+    public ContainerCreateOptions storageOpts(Map<String, String> storageOpts) {
         JsonObject map = new JsonObject();
         storageOpts.forEach(map::put);
         payload.put("storage_opts", map);
         return this;
     }
 
-    public ImageCreateOptions sysctl(Map<String, String> sysctl) {
+    public ContainerCreateOptions sysctl(Map<String, String> sysctl) {
         JsonObject map = new JsonObject();
         sysctl.forEach(map::put);
         payload.put("sysctl", map);
         return this;
     }
 
-    public ImageCreateOptions systemd(String systemd) {
+    public ContainerCreateOptions systemd(String systemd) {
         payload.put("systemd", systemd);
         return this;
     }
 
-    public ImageCreateOptions terminal(boolean terminal) {
+    public ContainerCreateOptions terminal(boolean terminal) {
         payload.put("terminal", terminal);
         return this;
     }
 
-    public ImageCreateOptions throttleReadBpsDevice(Map<String, LinuxThrottleDevice> throttleReadBpsDevice) {
+    public ContainerCreateOptions throttleReadBpsDevice(Map<String, LinuxThrottleDevice> throttleReadBpsDevice) {
         JsonObject map = new JsonObject();
         throttleReadBpsDevice.forEach(map::put);
         payload.put("throttleReadBpsDevice", map);
         return this;
     }
 
-    public ImageCreateOptions throttleReadIOPSDevice(Map<String, LinuxThrottleDevice> throttleReadIOPSDevice) {
+    public ContainerCreateOptions throttleReadIOPSDevice(Map<String, LinuxThrottleDevice> throttleReadIOPSDevice) {
         JsonObject map = new JsonObject();
         throttleReadIOPSDevice.forEach(map::put);
         payload.put("throttleReadIOPSDevice", map);
         return this;
     }
 
-    public ImageCreateOptions throttleWriteBpsDevice(Map<String, LinuxThrottleDevice> throttleWriteBpsDevice) {
+    public ContainerCreateOptions throttleWriteBpsDevice(Map<String, LinuxThrottleDevice> throttleWriteBpsDevice) {
         JsonObject map = new JsonObject();
         throttleWriteBpsDevice.forEach(map::put);
         payload.put("throttleWriteBpsDevice", map);
         return this;
     }
 
-    public ImageCreateOptions throttleWriteIOPSDevice(Map<String, LinuxThrottleDevice> throttleWriteIOPSDevice) {
+    public ContainerCreateOptions throttleWriteIOPSDevice(Map<String, LinuxThrottleDevice> throttleWriteIOPSDevice) {
         JsonObject map = new JsonObject();
         throttleWriteIOPSDevice.forEach(map::put);
         payload.put("throttleWriteIOPSDevice", map);
         return this;
     }
 
-    public ImageCreateOptions timeout(long timeout) {
+    public ContainerCreateOptions timeout(long timeout) {
         payload.put("timeout", timeout);
         return this;
     }
 
-    public ImageCreateOptions timezone(String timezone) {
+    public ContainerCreateOptions timezone(String timezone) {
         payload.put("timezone", timezone);
         return this;
     }
 
-    public ImageCreateOptions umask(String umask) {
+    public ContainerCreateOptions umask(String umask) {
         payload.put("umask", umask);
         return this;
     }
 
-    public ImageCreateOptions unified(Map<String, String> unified) {
+    public ContainerCreateOptions unified(Map<String, String> unified) {
         JsonObject map = new JsonObject();
         unified.forEach(map::put);
         payload.put("unified", map);
         return this;
     }
 
-    public ImageCreateOptions unmask(List<String> unmask) {
+    public ContainerCreateOptions unmask(List<String> unmask) {
         payload.put("unmask", new JsonArray(unmask));
         return this;
     }
 
-    public ImageCreateOptions unsetenv(List<String> unsetenv) {
+    public ContainerCreateOptions unsetenv(List<String> unsetenv) {
         payload.put("unsetenv", new JsonArray(unsetenv));
         return this;
     }
 
-    public ImageCreateOptions unsetenvall(boolean unsetenvall) {
+    public ContainerCreateOptions unsetenvall(boolean unsetenvall) {
         payload.put("unsetenvall", unsetenvall);
         return this;
     }
 
-    public ImageCreateOptions useImageHosts(boolean useImageHosts) {
+    public ContainerCreateOptions useImageHosts(boolean useImageHosts) {
         payload.put("use_image_hosts", useImageHosts);
         return this;
     }
 
-    public ImageCreateOptions useImageResolveConf(boolean useImageResolveConf) {
+    public ContainerCreateOptions useImageResolveConf(boolean useImageResolveConf) {
         payload.put("use_image_resolve_conf", useImageResolveConf);
         return this;
     }
 
-    public ImageCreateOptions user(String user) {
+    public ContainerCreateOptions user(String user) {
         payload.put("user", user);
         return this;
     }
 
-    public ImageCreateOptions userns(String nsmode, String value) {
+    public ContainerCreateOptions userns(String nsmode, String value) {
         payload.put("userns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions utsns(String nsmode, String value) {
+    public ContainerCreateOptions utsns(String nsmode, String value) {
         payload.put("utsns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
-    public ImageCreateOptions volatile_(boolean volatile_) {
+    public ContainerCreateOptions volatile_(boolean volatile_) {
         payload.put("volatile", volatile_);
         return this;
     }
@@ -1029,25 +1029,25 @@ public class ImageCreateOptions {
         }
     }
 
-    public ImageCreateOptions volumes(List<NamedVolume> volumes) {
+    public ContainerCreateOptions volumes(List<NamedVolume> volumes) {
         payload.put(
                 "volumes", new JsonArray(volumes.stream().map(NamedVolume::json).toList()));
         return this;
     }
 
-    public ImageCreateOptions volumesFrom(List<String> volumesFrom) {
+    public ContainerCreateOptions volumesFrom(List<String> volumesFrom) {
         payload.put("volumes_from", new JsonArray(volumesFrom));
         return this;
     }
 
-    public ImageCreateOptions weightDevice(Map<String, LinuxWeightDevice> weightDevice) {
+    public ContainerCreateOptions weightDevice(Map<String, LinuxWeightDevice> weightDevice) {
         JsonObject map = new JsonObject();
         weightDevice.forEach((key, value) -> map.put(key, value.json()));
         payload.put("weightDevice", map);
         return this;
     }
 
-    public ImageCreateOptions workDir(String workDir) {
+    public ContainerCreateOptions workDir(String workDir) {
         payload.put("work_dir", workDir);
         return this;
     }

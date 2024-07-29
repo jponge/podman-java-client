@@ -2,6 +2,7 @@ package podman.client;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import podman.client.containers.ContainersGroup;
 import podman.client.images.ImagesGroup;
 import podman.client.secrets.SecretsGroup;
 import podman.client.system.SystemGroup;
@@ -52,4 +53,6 @@ public interface PodmanClient {
     VolumesGroup volumes();
 
     ImagesGroup images();
+
+    ContainersGroup containers();
 }

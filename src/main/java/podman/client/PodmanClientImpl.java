@@ -5,6 +5,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.net.SocketAddress;
+import podman.client.containers.ContainersGroup;
+import podman.client.containers.ContainersGroupImpl;
 import podman.client.images.ImagesGroup;
 import podman.client.images.ImagesGroupImpl;
 import podman.client.secrets.SecretsGroup;
@@ -49,5 +51,10 @@ class PodmanClientImpl implements PodmanClient {
     @Override
     public ImagesGroup images() {
         return new ImagesGroupImpl(context);
+    }
+
+    @Override
+    public ContainersGroup containers() {
+        return new ContainersGroupImpl(context);
     }
 }

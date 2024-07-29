@@ -1,4 +1,4 @@
-package podman.client.images;
+package podman.client.containers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ImageCreateOptionsTest {
+class ContainerCreateOptionsTest {
 
     // Note: it's a (too) big class to test
 
     @Test
     void checkSomeEntries() {
-        JsonObject json = new ImageCreateOptions()
+        JsonObject json = new ContainerCreateOptions()
                 .image("quay.io/podman/hello:latest")
                 .imageArch("arm64")
                 .imageOs("linux")
@@ -22,8 +22,8 @@ class ImageCreateOptionsTest {
                 .user("root")
                 .command(List.of("/bin/sh", "-c", "echo hello"))
                 .secrets(List.of(
-                        new ImageCreateOptions.Secret("secret1", "yolo"),
-                        new ImageCreateOptions.Secret("secret2", "1234")))
+                        new ContainerCreateOptions.Secret("secret1", "yolo"),
+                        new ContainerCreateOptions.Secret("secret2", "1234")))
                 .dnsServer(List.of("1.1.1.1", "8.8.8.8"))
                 .remove(true)
                 .json();
