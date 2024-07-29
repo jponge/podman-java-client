@@ -2,7 +2,6 @@ package podman.client.images;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +102,10 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions deviceCgroupRule(List<LinuxDeviceCgroup> deviceCgroupRules) {
-        payload.put("device_cgroup_rule", new JsonArray(deviceCgroupRules.stream().map(LinuxDeviceCgroup::json).toList()));
+        payload.put(
+                "device_cgroup_rule",
+                new JsonArray(
+                        deviceCgroupRules.stream().map(LinuxDeviceCgroup::json).toList()));
         return this;
     }
 
@@ -121,7 +123,8 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions devices(List<LinuxDevice> devices) {
-        payload.put("devices", new JsonArray(devices.stream().map(LinuxDevice::json).toList()));
+        payload.put(
+                "devices", new JsonArray(devices.stream().map(LinuxDevice::json).toList()));
         return this;
     }
 
@@ -310,8 +313,7 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record ImageVolume(String destination, boolean readWrite, String source) {
-    }
+    public record ImageVolume(String destination, boolean readWrite, String source) {}
 
     public ImageCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
         JsonArray array = new JsonArray();
@@ -477,10 +479,8 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record PerNetworkOptions(List<String> aliases,
-                                    String interfaceName,
-                                    List<String> staticIps,
-                                    String staticMac) {
+    public record PerNetworkOptions(
+            List<String> aliases, String interfaceName, List<String> staticIps, String staticMac) {
         public JsonObject json() {
             return new JsonObject()
                     .put("aliases", new JsonArray(aliases))
@@ -522,7 +522,9 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions overlayVolumes(List<OverlayVolume> volumes) {
-        payload.put("overlay_volumes", new JsonArray(volumes.stream().map(OverlayVolume::json).toList()));
+        payload.put(
+                "overlay_volumes",
+                new JsonArray(volumes.stream().map(OverlayVolume::json).toList()));
         return this;
     }
 
@@ -546,11 +548,7 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record PortMapping(int containerPort,
-                              String hostIp,
-                              int hostPort,
-                              String protocol,
-                              int range) {
+    public record PortMapping(int containerPort, String hostIp, int hostPort, String protocol, int range) {
         public JsonObject json() {
             return new JsonObject()
                     .put("container_port", containerPort)
@@ -562,7 +560,9 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions portMappings(List<PortMapping> portMappings) {
-        payload.put("portmappings", new JsonArray(portMappings.stream().map(PortMapping::json).toList()));
+        payload.put(
+                "portmappings",
+                new JsonArray(portMappings.stream().map(PortMapping::json).toList()));
         return this;
     }
 
@@ -583,15 +583,14 @@ public class ImageCreateOptions {
 
     public record POSIXRlimit(long hard, long soft, String type) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("hard", hard)
-                    .put("soft", soft)
-                    .put("type", type);
+            return new JsonObject().put("hard", hard).put("soft", soft).put("type", type);
         }
     }
 
     public ImageCreateOptions rLimits(List<POSIXRlimit> rLimits) {
-        payload.put("r_limits", new JsonArray(rLimits.stream().map(POSIXRlimit::json).toList()));
+        payload.put(
+                "r_limits",
+                new JsonArray(rLimits.stream().map(POSIXRlimit::json).toList()));
         return this;
     }
 
@@ -615,31 +614,49 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record LinuxBlockIO(int leafWeight,
-                               List<LinuxThrottleDevice> throttleReadBpsDevice,
-                               List<LinuxThrottleDevice> throttleReadIOPSDevice,
-                               List<LinuxThrottleDevice> throttleWriteBpsDevice,
-                               List<LinuxThrottleDevice> throttleWriteIOPSDevice,
-                               int weight,
-                               List<LinuxWeightDevice> weightDevice) {
+    public record LinuxBlockIO(
+            int leafWeight,
+            List<LinuxThrottleDevice> throttleReadBpsDevice,
+            List<LinuxThrottleDevice> throttleReadIOPSDevice,
+            List<LinuxThrottleDevice> throttleWriteBpsDevice,
+            List<LinuxThrottleDevice> throttleWriteIOPSDevice,
+            int weight,
+            List<LinuxWeightDevice> weightDevice) {
         public JsonObject json() {
             return new JsonObject()
                     .put("leafWeight", leafWeight)
-                    .put("throttleReadBpsDevice", new JsonArray(throttleReadBpsDevice.stream().map(LinuxThrottleDevice::json).toList()))
-                    .put("throttleReadIOPSDevice", new JsonArray(throttleReadIOPSDevice.stream().map(LinuxThrottleDevice::json).toList()))
-                    .put("throttleWriteBpsDevice", new JsonArray(throttleWriteBpsDevice.stream().map(LinuxThrottleDevice::json).toList()))
-                    .put("throttleWriteIOPSDevice", new JsonArray(throttleWriteIOPSDevice.stream().map(LinuxThrottleDevice::json).toList()))
+                    .put(
+                            "throttleReadBpsDevice",
+                            new JsonArray(throttleReadBpsDevice.stream()
+                                    .map(LinuxThrottleDevice::json)
+                                    .toList()))
+                    .put(
+                            "throttleReadIOPSDevice",
+                            new JsonArray(throttleReadIOPSDevice.stream()
+                                    .map(LinuxThrottleDevice::json)
+                                    .toList()))
+                    .put(
+                            "throttleWriteBpsDevice",
+                            new JsonArray(throttleWriteBpsDevice.stream()
+                                    .map(LinuxThrottleDevice::json)
+                                    .toList()))
+                    .put(
+                            "throttleWriteIOPSDevice",
+                            new JsonArray(throttleWriteIOPSDevice.stream()
+                                    .map(LinuxThrottleDevice::json)
+                                    .toList()))
                     .put("weight", weight)
-                    .put("weightDevice", new JsonArray(weightDevice.stream().map(LinuxWeightDevice::json).toList()));
+                    .put(
+                            "weightDevice",
+                            new JsonArray(weightDevice.stream()
+                                    .map(LinuxWeightDevice::json)
+                                    .toList()));
         }
     }
 
     public record LinuxThrottleDevice(long major, long minor, long rate) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("major", major)
-                    .put("minor", minor)
-                    .put("rate", rate);
+            return new JsonObject().put("major", major).put("minor", minor).put("rate", rate);
         }
     }
 
@@ -653,15 +670,16 @@ public class ImageCreateOptions {
         }
     }
 
-    public record LinuxCPU(long burst,
-                           String cpus,
-                           long idle,
-                           String mems,
-                           long period,
-                           long quota,
-                           long realtimePeriod,
-                           long realtimeRuntime,
-                           long shares) {
+    public record LinuxCPU(
+            long burst,
+            String cpus,
+            long idle,
+            String mems,
+            long period,
+            long quota,
+            long realtimePeriod,
+            long realtimeRuntime,
+            long shares) {
         public JsonObject json() {
             return new JsonObject()
                     .put("burst", burst)
@@ -678,20 +696,19 @@ public class ImageCreateOptions {
 
     public record LinuxHugepageLimit(long limit, String pageSize) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("limit", limit)
-                    .put("pageSize", pageSize);
+            return new JsonObject().put("limit", limit).put("pageSize", pageSize);
         }
     }
 
-    public record LinuxMemory(boolean checkBeforeUpdate,
-                              boolean disableOOMKiller,
-                              long kernelTCP,
-                              long limit,
-                              long reservation,
-                              long swap,
-                              long swappiness,
-                              boolean useHierarchy) {
+    public record LinuxMemory(
+            boolean checkBeforeUpdate,
+            boolean disableOOMKiller,
+            long kernelTCP,
+            long limit,
+            long reservation,
+            long swap,
+            long swappiness,
+            boolean useHierarchy) {
         public JsonObject json() {
             return new JsonObject()
                     .put("checkBeforeUpdate", checkBeforeUpdate)
@@ -709,30 +726,29 @@ public class ImageCreateOptions {
         public JsonObject json() {
             return new JsonObject()
                     .put("classID", classID)
-                    .put("priorities", new JsonArray(priorities.stream().map(LinuxInterfacePriority::json).toList()));
+                    .put(
+                            "priorities",
+                            new JsonArray(priorities.stream()
+                                    .map(LinuxInterfacePriority::json)
+                                    .toList()));
         }
     }
 
     public record LinuxInterfacePriority(String name, int priority) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("name", name)
-                    .put("priority", priority);
+            return new JsonObject().put("name", name).put("priority", priority);
         }
     }
 
     public record LinuxPids(long limit) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("limit", limit);
+            return new JsonObject().put("limit", limit);
         }
     }
 
     public record LinuxRdma(int hcaHandles, int hcaObjects) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("hcaHandles", hcaHandles)
-                    .put("hcaObjects", hcaObjects);
+            return new JsonObject().put("hcaHandles", hcaHandles).put("hcaObjects", hcaObjects);
         }
     }
 
@@ -745,13 +761,17 @@ public class ImageCreateOptions {
             LinuxNetwork network,
             LinuxPids pids,
             Map<String, LinuxRdma> rdma,
-            Map<String, String> unified
-    ) {
+            Map<String, String> unified) {
         JsonObject map = new JsonObject();
         map.put("blockIO", blockIO.json());
         map.put("cpu", cpu.json());
-        map.put("devices", new JsonArray(devices.stream().map(LinuxDeviceCgroup::json).toList()));
-        map.put("hugepageLimits", new JsonArray(hugepageLimits.stream().map(LinuxHugepageLimit::json).toList()));
+        map.put(
+                "devices",
+                new JsonArray(devices.stream().map(LinuxDeviceCgroup::json).toList()));
+        map.put(
+                "hugepageLimits",
+                new JsonArray(
+                        hugepageLimits.stream().map(LinuxHugepageLimit::json).toList()));
         map.put("memory", memory.json());
         map.put("network", network.json());
         map.put("pids", pids.json());
@@ -822,9 +842,7 @@ public class ImageCreateOptions {
 
     public record Secret(String key, String secret) {
         public JsonObject json() {
-            return new JsonObject()
-                    .put("Key", key)
-                    .put("Secret", secret);
+            return new JsonObject().put("Key", key).put("Secret", secret);
         }
     }
 
@@ -849,13 +867,7 @@ public class ImageCreateOptions {
     }
 
     public record StartupHealthCheck(
-            long interval,
-            long retries,
-            long startPeriod,
-            long successes,
-            List<String> test,
-            long timeout
-    ) {
+            long interval, long retries, long startPeriod, long successes, List<String> test, long timeout) {
         public JsonObject json() {
             return new JsonObject()
                     .put("Interval", interval)
@@ -992,16 +1004,12 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions userns(String nsmode, String value) {
-        payload.put("userns", new JsonObject()
-                .put("nsmode", nsmode)
-                .put("value", value));
+        payload.put("userns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
     public ImageCreateOptions utsns(String nsmode, String value) {
-        payload.put("utsns", new JsonObject()
-                .put("nsmode", nsmode)
-                .put("value", value));
+        payload.put("utsns", new JsonObject().put("nsmode", nsmode).put("value", value));
         return this;
     }
 
@@ -1010,13 +1018,7 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record NamedVolume(
-            String dest,
-            boolean isAnonymous,
-            String name,
-            List<String> options,
-            String subPath
-    ) {
+    public record NamedVolume(String dest, boolean isAnonymous, String name, List<String> options, String subPath) {
         public JsonObject json() {
             return new JsonObject()
                     .put("Dest", dest)
@@ -1028,7 +1030,8 @@ public class ImageCreateOptions {
     }
 
     public ImageCreateOptions volumes(List<NamedVolume> volumes) {
-        payload.put("volumes", new JsonArray(volumes.stream().map(NamedVolume::json).toList()));
+        payload.put(
+                "volumes", new JsonArray(volumes.stream().map(NamedVolume::json).toList()));
         return this;
     }
 
