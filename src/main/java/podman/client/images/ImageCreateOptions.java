@@ -1,8 +1,8 @@
 package podman.client.images;
 
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
 import java.util.List;
 import java.util.Map;
 
@@ -91,37 +91,37 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record LinuxDeviceCgroup(String access, boolean allow, long major, long minor, String type) {}
+    public record LinuxDeviceCgroup(String access, boolean allow, long major, long minor, String type) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("access", access)
+                    .put("allow", allow)
+                    .put("major", major)
+                    .put("minor", minor)
+                    .put("type", type);
+        }
+    }
 
     public ImageCreateOptions deviceCgroupRule(List<LinuxDeviceCgroup> deviceCgroupRules) {
-        JsonArray array = new JsonArray();
-        for (LinuxDeviceCgroup rule : deviceCgroupRules) {
-            array.add(new JsonObject()
-                    .put("access", rule.access)
-                    .put("allow", rule.allow)
-                    .put("major", rule.major)
-                    .put("minor", rule.minor)
-                    .put("type", rule.type));
-        }
-        payload.put("device_cgroup_rule", array);
+        payload.put("device_cgroup_rule", new JsonArray(deviceCgroupRules.stream().map(LinuxDeviceCgroup::json).toList()));
         return this;
     }
 
-    public record LinuxDevice(int fileMode, int gid, long major, long minor, String path, String type, int uid) {}
+    public record LinuxDevice(int fileMode, int gid, long major, long minor, String path, String type, int uid) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("fileMode", fileMode)
+                    .put("gid", gid)
+                    .put("major", major)
+                    .put("minor", minor)
+                    .put("path", path)
+                    .put("type", type)
+                    .put("uid", uid);
+        }
+    }
 
     public ImageCreateOptions devices(List<LinuxDevice> devices) {
-        JsonArray array = new JsonArray();
-        for (LinuxDevice device : devices) {
-            array.add(new JsonObject()
-                    .put("fileMode", device.fileMode)
-                    .put("gid", device.gid)
-                    .put("major", device.major)
-                    .put("minor", device.minor)
-                    .put("path", device.path)
-                    .put("type", device.type)
-                    .put("uid", device.uid));
-        }
-        payload.put("devices", array);
+        payload.put("devices", new JsonArray(devices.stream().map(LinuxDevice::json).toList()));
         return this;
     }
 
@@ -310,7 +310,8 @@ public class ImageCreateOptions {
         return this;
     }
 
-    public record ImageVolume(String destination, boolean readWrite, String source) {}
+    public record ImageVolume(String destination, boolean readWrite, String source) {
+    }
 
     public ImageCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
         JsonArray array = new JsonArray();
@@ -613,4 +614,345 @@ public class ImageCreateOptions {
         payload.put("remove", remove);
         return this;
     }
+
+    public record LinuxBlockIO(int leafWeight,
+                               List<LinuxThrottleDevice> throttleReadBpsDevice,
+                               List<LinuxThrottleDevice> throttleReadIOPSDevice,
+                               List<LinuxThrottleDevice> throttleWriteBpsDevice,
+                               List<LinuxThrottleDevice> throttleWriteIOPSDevice,
+                               int weight,
+                               List<LinuxWeightDevice> weightDevice) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("leafWeight", leafWeight)
+                    .put("throttleReadBpsDevice", new JsonArray(throttleReadBpsDevice.stream().map(LinuxThrottleDevice::json).toList()))
+                    .put("throttleReadIOPSDevice", new JsonArray(throttleReadIOPSDevice.stream().map(LinuxThrottleDevice::json).toList()))
+                    .put("throttleWriteBpsDevice", new JsonArray(throttleWriteBpsDevice.stream().map(LinuxThrottleDevice::json).toList()))
+                    .put("throttleWriteIOPSDevice", new JsonArray(throttleWriteIOPSDevice.stream().map(LinuxThrottleDevice::json).toList()))
+                    .put("weight", weight)
+                    .put("weightDevice", new JsonArray(weightDevice.stream().map(LinuxWeightDevice::json).toList()));
+        }
+    }
+
+    public record LinuxThrottleDevice(long major, long minor, long rate) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("major", major)
+                    .put("minor", minor)
+                    .put("rate", rate);
+        }
+    }
+
+    public record LinuxWeightDevice(int leafWeight, long major, long minor, int weight) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("leafWeight", leafWeight)
+                    .put("major", major)
+                    .put("minor", minor)
+                    .put("weight", weight);
+        }
+    }
+
+    public record LinuxCPU(long burst,
+                           String cpus,
+                           long idle,
+                           String mems,
+                           long period,
+                           long quota,
+                           long realtimePeriod,
+                           long realtimeRuntime,
+                           long shares) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("burst", burst)
+                    .put("cpus", cpus)
+                    .put("idle", idle)
+                    .put("mems", mems)
+                    .put("period", period)
+                    .put("quota", quota)
+                    .put("realtimePeriod", realtimePeriod)
+                    .put("realtimeRuntime", realtimeRuntime)
+                    .put("shares", shares);
+        }
+    }
+
+    public record LinuxHugepageLimit(long limit, String pageSize) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("limit", limit)
+                    .put("pageSize", pageSize);
+        }
+    }
+
+    public record LinuxMemory(boolean checkBeforeUpdate,
+                              boolean disableOOMKiller,
+                              long kernelTCP,
+                              long limit,
+                              long reservation,
+                              long swap,
+                              long swappiness,
+                              boolean useHierarchy) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("checkBeforeUpdate", checkBeforeUpdate)
+                    .put("disableOOMKiller", disableOOMKiller)
+                    .put("kernelTCP", kernelTCP)
+                    .put("limit", limit)
+                    .put("reservation", reservation)
+                    .put("swap", swap)
+                    .put("swappiness", swappiness)
+                    .put("useHierarchy", useHierarchy);
+        }
+    }
+
+    public record LinuxNetwork(int classID, List<LinuxInterfacePriority> priorities) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("classID", classID)
+                    .put("priorities", new JsonArray(priorities.stream().map(LinuxInterfacePriority::json).toList()));
+        }
+    }
+
+    public record LinuxInterfacePriority(String name, int priority) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("name", name)
+                    .put("priority", priority);
+        }
+    }
+
+    public record LinuxPids(long limit) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("limit", limit);
+        }
+    }
+
+    public record LinuxRdma(int hcaHandles, int hcaObjects) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("hcaHandles", hcaHandles)
+                    .put("hcaObjects", hcaObjects);
+        }
+    }
+
+    public ImageCreateOptions resourceLimits(
+            LinuxBlockIO blockIO,
+            LinuxCPU cpu,
+            List<LinuxDeviceCgroup> devices,
+            List<LinuxHugepageLimit> hugepageLimits,
+            LinuxMemory memory,
+            LinuxNetwork network,
+            LinuxPids pids,
+            Map<String, LinuxRdma> rdma,
+            Map<String, String> unified
+    ) {
+        JsonObject map = new JsonObject();
+        map.put("blockIO", blockIO.json());
+        map.put("cpu", cpu.json());
+        map.put("devices", new JsonArray(devices.stream().map(LinuxDeviceCgroup::json).toList()));
+        map.put("hugepageLimits", new JsonArray(hugepageLimits.stream().map(LinuxHugepageLimit::json).toList()));
+        map.put("memory", memory.json());
+        map.put("network", network.json());
+        map.put("pids", pids.json());
+
+        JsonObject rdmas = new JsonObject();
+        rdma.forEach((key, value) -> rdmas.put(key, value.json()));
+        map.put("rdma", rdmas);
+
+        JsonObject unifieds = new JsonObject();
+        unified.forEach(unifieds::put);
+        map.put("unified", unifieds);
+
+        payload.put("resource_limits", map);
+        return this;
+    }
+
+    public ImageCreateOptions restartPolicy(String restartPolicy) {
+        payload.put("restart_policy", restartPolicy);
+        return this;
+    }
+
+    public ImageCreateOptions restartTries(long restartTries) {
+        payload.put("restart_tries", restartTries);
+        return this;
+    }
+
+    public ImageCreateOptions rootfs(String rootfs) {
+        payload.put("rootfs", rootfs);
+        return this;
+    }
+
+    public ImageCreateOptions rootfsMapping(String rootfsMapping) {
+        payload.put("rootfs_mapping", rootfsMapping);
+        return this;
+    }
+
+    public ImageCreateOptions rootfsOverlay(boolean rootfsOverlay) {
+        payload.put("rootfs_overlay", rootfsOverlay);
+        return this;
+    }
+
+    public ImageCreateOptions rootfsPropagation(String rootfsPropagation) {
+        payload.put("rootfs_propagation", rootfsPropagation);
+        return this;
+    }
+
+    public ImageCreateOptions sdnotifyMode(String sdnotifyMode) {
+        payload.put("sdnotifyMode", sdnotifyMode);
+        return this;
+    }
+
+    public ImageCreateOptions seccompPolicy(String seccompPolicy) {
+        payload.put("seccomp_policy", seccompPolicy);
+        return this;
+    }
+
+    public ImageCreateOptions seccompProfilePath(String seccompProfilePath) {
+        payload.put("seccomp_profile_path", seccompProfilePath);
+        return this;
+    }
+
+    public ImageCreateOptions secretEnv(Map<String, String> secretEnv) {
+        JsonObject map = new JsonObject();
+        secretEnv.forEach(map::put);
+        payload.put("secret_env", map);
+        return this;
+    }
+
+    public record Secret(String key, String secret) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("Key", key)
+                    .put("Secret", secret);
+        }
+    }
+
+    public ImageCreateOptions secrets(List<Secret> secrets) {
+        payload.put("secrets", new JsonArray(secrets.stream().map(Secret::json).toList()));
+        return this;
+    }
+
+    public ImageCreateOptions selinuxOpts(List<String> selinuxOpts) {
+        payload.put("selinux_opts", new JsonArray(selinuxOpts));
+        return this;
+    }
+
+    public ImageCreateOptions shmSize(long shmSize) {
+        payload.put("shm_size", shmSize);
+        return this;
+    }
+
+    public ImageCreateOptions shmSizeSystemd(long shmSizeSystemd) {
+        payload.put("shm_size_systemd", shmSizeSystemd);
+        return this;
+    }
+
+    public record StartupHealthCheck(
+            long interval,
+            long retries,
+            long startPeriod,
+            long successes,
+            List<String> test,
+            long timeout
+    ) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("Interval", interval)
+                    .put("Retries", retries)
+                    .put("StartPeriod", startPeriod)
+                    .put("Successes", successes)
+                    .put("Test", new JsonArray(test))
+                    .put("Timeout", timeout);
+        }
+    }
+
+    public ImageCreateOptions startupHealthConfig(StartupHealthCheck startupHealthCheck) {
+        payload.put("startupHealthConfig", startupHealthCheck.json());
+        return this;
+    }
+
+    public ImageCreateOptions stdin(boolean stdin) {
+        payload.put("stdin", stdin);
+        return this;
+    }
+
+    public ImageCreateOptions stopSignal(long stopSignal) {
+        payload.put("stop_signal", stopSignal);
+        return this;
+    }
+
+    public ImageCreateOptions stopTimeout(long stopTimeout) {
+        payload.put("stop_timeout", stopTimeout);
+        return this;
+    }
+
+    public ImageCreateOptions storageOpts(Map<String, String> storageOpts) {
+        JsonObject map = new JsonObject();
+        storageOpts.forEach(map::put);
+        payload.put("storage_opts", map);
+        return this;
+    }
+
+    public ImageCreateOptions sysctl(Map<String, String> sysctl) {
+        JsonObject map = new JsonObject();
+        sysctl.forEach(map::put);
+        payload.put("sysctl", map);
+        return this;
+    }
+
+    public ImageCreateOptions systemd(String systemd) {
+        payload.put("systemd", systemd);
+        return this;
+    }
+
+    public ImageCreateOptions terminal(boolean terminal) {
+        payload.put("terminal", terminal);
+        return this;
+    }
+
+    public ImageCreateOptions throttleReadBpsDevice(Map<String, LinuxThrottleDevice> throttleReadBpsDevice) {
+        JsonObject map = new JsonObject();
+        throttleReadBpsDevice.forEach(map::put);
+        payload.put("throttleReadBpsDevice", map);
+        return this;
+    }
+
+    public ImageCreateOptions throttleReadIOPSDevice(Map<String, LinuxThrottleDevice> throttleReadIOPSDevice) {
+        JsonObject map = new JsonObject();
+        throttleReadIOPSDevice.forEach(map::put);
+        payload.put("throttleReadIOPSDevice", map);
+        return this;
+    }
+
+    public ImageCreateOptions throttleWriteBpsDevice(Map<String, LinuxThrottleDevice> throttleWriteBpsDevice) {
+        JsonObject map = new JsonObject();
+        throttleWriteBpsDevice.forEach(map::put);
+        payload.put("throttleWriteBpsDevice", map);
+        return this;
+    }
+
+    public ImageCreateOptions throttleWriteIOPSDevice(Map<String, LinuxThrottleDevice> throttleWriteIOPSDevice) {
+        JsonObject map = new JsonObject();
+        throttleWriteIOPSDevice.forEach(map::put);
+        payload.put("throttleWriteIOPSDevice", map);
+        return this;
+    }
+
+    public ImageCreateOptions timeout(long timeout) {
+        payload.put("timeout", timeout);
+        return this;
+    }
+
+    public ImageCreateOptions timezone(String timezone) {
+        payload.put("timezone", timezone);
+        return this;
+    }
+
+    public ImageCreateOptions umask(String umask) {
+        payload.put("umask", umask);
+        return this;
+    }
+
+
 }
