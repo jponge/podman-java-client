@@ -954,5 +954,98 @@ public class ImageCreateOptions {
         return this;
     }
 
+    public ImageCreateOptions unified(Map<String, String> unified) {
+        JsonObject map = new JsonObject();
+        unified.forEach(map::put);
+        payload.put("unified", map);
+        return this;
+    }
 
+    public ImageCreateOptions unmask(List<String> unmask) {
+        payload.put("unmask", new JsonArray(unmask));
+        return this;
+    }
+
+    public ImageCreateOptions unsetenv(List<String> unsetenv) {
+        payload.put("unsetenv", new JsonArray(unsetenv));
+        return this;
+    }
+
+    public ImageCreateOptions unsetenvall(boolean unsetenvall) {
+        payload.put("unsetenvall", unsetenvall);
+        return this;
+    }
+
+    public ImageCreateOptions useImageHosts(boolean useImageHosts) {
+        payload.put("use_image_hosts", useImageHosts);
+        return this;
+    }
+
+    public ImageCreateOptions useImageResolveConf(boolean useImageResolveConf) {
+        payload.put("use_image_resolve_conf", useImageResolveConf);
+        return this;
+    }
+
+    public ImageCreateOptions user(String user) {
+        payload.put("user", user);
+        return this;
+    }
+
+    public ImageCreateOptions userns(String nsmode, String value) {
+        payload.put("userns", new JsonObject()
+                .put("nsmode", nsmode)
+                .put("value", value));
+        return this;
+    }
+
+    public ImageCreateOptions utsns(String nsmode, String value) {
+        payload.put("utsns", new JsonObject()
+                .put("nsmode", nsmode)
+                .put("value", value));
+        return this;
+    }
+
+    public ImageCreateOptions volatile_(boolean volatile_) {
+        payload.put("volatile", volatile_);
+        return this;
+    }
+
+    public record NamedVolume(
+            String dest,
+            boolean isAnonymous,
+            String name,
+            List<String> options,
+            String subPath
+    ) {
+        public JsonObject json() {
+            return new JsonObject()
+                    .put("Dest", dest)
+                    .put("IsAnonymous", isAnonymous)
+                    .put("Name", name)
+                    .put("Options", new JsonArray(options))
+                    .put("SubPath", subPath);
+        }
+    }
+
+    public ImageCreateOptions volumes(List<NamedVolume> volumes) {
+        payload.put("volumes", new JsonArray(volumes.stream().map(NamedVolume::json).toList()));
+        return this;
+    }
+
+    public ImageCreateOptions volumesFrom(List<String> volumesFrom) {
+        payload.put("volumes_from", new JsonArray(volumesFrom));
+        return this;
+    }
+
+    public ImageCreateOptions weightDevice(Map<String, LinuxWeightDevice> weightDevice) {
+        JsonObject map = new JsonObject();
+        weightDevice.forEach((key, value) -> map.put(key, value.json()));
+        payload.put("weightDevice", map);
+        return this;
+    }
+
+    public ImageCreateOptions workDir(String workDir) {
+        payload.put("work_dir", workDir);
+        return this;
+    }
 }
