@@ -3,12 +3,14 @@ package podman.client;
 import io.smallrye.mutiny.helpers.test.AssertSubscriber;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.containers.ContainerCreateOptions;
+import podman.client.containers.ContainerDeleteOptions;
 import podman.client.images.ImagePullOptions;
 import podman.machine.PodmanMachineClient;
 
@@ -47,10 +49,20 @@ public class PodmanClientContainersTest {
 
     @Test
     void createAndDeleteContainer() throws Throwable {
-        JsonObject result = awaitResult(client.containers().create(new ContainerCreateOptions()
+        JsonObject createResult = awaitResult(client.containers().create(new ContainerCreateOptions()
                 .image("quay.io/podman/hello:latest")
                 .remove(true)));
-        // TODO
-        System.out.println(result.encodePrettily());
+        String id = createResult.getString("Id");
+
+        assertThat(awaitResult(client.containers().exists(id))).isTrue();
+
+        JsonArray deleteResult = awaitResult(client.containers().delete(id, new ContainerDeleteOptions()
+                .setDeleteVolumes(true)
+                .setDepend(true)
+                .setIgnore(false)));
+        assertThat(deleteResult).hasSizeGreaterThanOrEqualTo(1);
+        assertThat(deleteResult.getJsonObject(0).getString("Id")).isEqualTo(id);
+
+        assertThat(awaitResult(client.containers().exists(id))).isFalse();
     }
 }
