@@ -21,6 +21,12 @@ class PodmanClientImpl implements PodmanClient {
 
     private final ClientContext context;
 
+    private VolumesGroup volumesGroup;
+    private ImagesGroup imagesGroup;
+    private ContainersGroup containersGroup;
+    private SystemGroup systemGroup;
+    private SecretsGroup secretsGroup;
+
     public PodmanClientImpl(Vertx vertx, Options options) {
         SocketAddress socketAddress = SocketAddress.domainSocketAddress(options.getSocketPath());
         HttpClient httpClient = vertx.createHttpClient(
@@ -35,26 +41,41 @@ class PodmanClientImpl implements PodmanClient {
 
     @Override
     public SystemGroup system() {
-        return new SystemGroupImpl(context);
+        if (systemGroup == null) {
+            systemGroup = new SystemGroupImpl(context);
+        }
+        return systemGroup;
     }
 
     @Override
     public SecretsGroup secrets() {
-        return new SecretsGroupImpl(context);
+        if (secretsGroup == null) {
+            secretsGroup = new SecretsGroupImpl(context);
+        }
+        return secretsGroup;
     }
 
     @Override
     public VolumesGroup volumes() {
-        return new VolumesGroupImpl(context);
+        if (volumesGroup == null) {
+            volumesGroup = new VolumesGroupImpl(context);
+        }
+        return volumesGroup;
     }
 
     @Override
     public ImagesGroup images() {
-        return new ImagesGroupImpl(context);
+        if (imagesGroup == null) {
+            imagesGroup = new ImagesGroupImpl(context);
+        }
+        return imagesGroup;
     }
 
     @Override
     public ContainersGroup containers() {
-        return new ContainersGroupImpl(context);
+        if (containersGroup == null) {
+            containersGroup = new ContainersGroupImpl(context);
+        }
+        return containersGroup;
     }
 }
