@@ -18,6 +18,7 @@ import podman.client.containers.MultiplexedStreamFrame;
 import podman.machine.PodmanMachineClient;
 
 import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import static helpers.AsyncTestHelpers.awaitResult;
@@ -139,5 +140,51 @@ public class PodmanClientContainersTest {
         for (int i = 0; i < nums.size(); i++) {
             assertThat(nums.get(i)).isEqualTo(i);
         }
+    }
+
+    @Test
+    void lifeOfLongRunningContainerWithStartStop() throws Throwable {
+        JsonObject createResult = awaitResult(
+                client.containers().create(new ContainerCreateOptions()
+                        .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
+                        .command(List.of(
+                                "/bin/sh",
+                                "-c",
+                                "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"
+                        ))));
+        String id = createResult.getString("Id");
+        awaitResult(client.containers().start(id));
+
+        AssertSubscriber<MultiplexedStreamFrame> logsSub = AssertSubscriber.create(Long.MAX_VALUE);
+        client.containers().logs(id, new ContainerGetLogsOptions().setFollow(true)).subscribe(logsSub);
+
+        Thread.sleep(250);
+        awaitResult(client.containers().stop(id, false, 1));
+        logsSub.awaitCompletion();
+        ArrayList<MultiplexedStreamFrame> itemsOnFirstRun = new ArrayList<>(logsSub.getItems());
+
+        awaitResult(client.containers().start(id));
+        logsSub = AssertSubscriber.create(Long.MAX_VALUE);
+        client.containers().logs(id, new ContainerGetLogsOptions().setFollow(true)).subscribe(logsSub);
+        Thread.sleep(250);
+
+        awaitResult(client.containers().kill(id));
+        awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
+
+        logsSub.awaitCompletion();
+        ArrayList<MultiplexedStreamFrame> itemsOnSecondRun = new ArrayList<>(logsSub.getItems());
+
+        List<Integer> nums1 = itemsOnFirstRun.stream()
+                .map(MultiplexedStreamFrame::buffer)
+                .map(buffer -> Integer.valueOf(buffer.toString().trim()))
+                .toList();
+        List<Integer> nums2 = itemsOnSecondRun.stream()
+                .map(MultiplexedStreamFrame::buffer)
+                .map(buffer -> Integer.valueOf(buffer.toString().trim()))
+                .toList();
+        assertThat(nums2.size()).isGreaterThan(nums1.size() + 1);
+        assertThat(nums2).startsWith(nums1.toArray(new Integer[0]));
+        assertThat(nums2.get(nums1.size())).isEqualTo(0);
+        assertThat(nums2.get(nums1.size() + 1)).isEqualTo(1);
     }
 }
