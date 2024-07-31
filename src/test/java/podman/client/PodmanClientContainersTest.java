@@ -3,10 +3,12 @@ package podman.client;
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.smallrye.mutiny.helpers.test.AssertSubscriber;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -14,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.containers.ContainerCreateOptions;
 import podman.client.containers.ContainerDeleteOptions;
+import podman.client.containers.ContainerGetLogsOptions;
+import podman.client.containers.MultiplexedStreamFrame;
 import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -77,5 +81,29 @@ public class PodmanClientContainersTest {
         awaitResult(client.containers().pause(id));
         awaitResult(client.containers().start(id));
         awaitResult(client.containers().stop(id, false, 10));
+    }
+
+    @Test
+    void getLogsPodmanHello() throws Throwable {
+        JsonObject createResult = awaitResult(
+                client.containers().create(new ContainerCreateOptions().image("quay.io/podman/hello:latest")));
+        String id = createResult.getString("Id");
+
+        awaitResult(client.containers().start(id));
+
+        AssertSubscriber<MultiplexedStreamFrame> sub = AssertSubscriber.create(Long.MAX_VALUE);
+        client.containers().logs(id, new ContainerGetLogsOptions()).subscribe(sub);
+
+        sub.awaitCompletion().assertCompleted();
+        List<MultiplexedStreamFrame> frames = sub.getItems();
+
+        assertThat(frames)
+                .isNotEmpty()
+                .anyMatch(frame -> (frame.type() == MultiplexedStreamFrame.Type.STD_OUT)
+                        && frame.buffer().toString().equals("!... Hello Podman World ...!\n"))
+                .anyMatch(frame -> (frame.type() == MultiplexedStreamFrame.Type.STD_OUT)
+                        && frame.buffer().toString().equals("Website:   https://podman.io\n"));
+
+        awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
     }
 }

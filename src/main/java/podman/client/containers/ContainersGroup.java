@@ -3,6 +3,7 @@ package podman.client.containers;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.concurrent.Flow;
 
 public interface ContainersGroup {
 
@@ -23,4 +24,6 @@ public interface ContainersGroup {
     Future<Void> kill(String name, String signal);
 
     Future<Void> stop(String name, boolean ignoreIfStopped, int timeout);
+
+    Flow.Publisher<MultiplexedStreamFrame> logs(String name, ContainerGetLogsOptions options);
 }

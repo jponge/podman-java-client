@@ -12,6 +12,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.uritemplate.UriTemplate;
 import io.vertx.uritemplate.Variables;
+import java.util.concurrent.Flow;
+import mutiny.zero.vertxpublishers.VertxPublisher;
 import podman.internal.ClientContext;
 
 public class ContainersGroupImpl implements ContainersGroup {
@@ -148,5 +150,23 @@ public class ContainersGroupImpl implements ContainersGroup {
                 requestOptions,
                 response -> statusCode(response, 204),
                 response -> succeededFuture());
+    }
+
+    private static final UriTemplate LOGS_TPL =
+            UriTemplate.of("/{base}/libpod/containers/{name}/logs{?follow,since,stderr,stdout,tail,timestamps,until}");
+
+    @Override
+    public Flow.Publisher<MultiplexedStreamFrame> logs(String name, ContainerGetLogsOptions options) {
+        Variables vars =
+                variables().set("base", context.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(context.socketAddress())
+                .setURI(LOGS_TPL.expandToString(options.fillQueryParams(vars)));
+        return VertxPublisher.fromFuture(() -> makeSimplifiedRequest(
+                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> {
+                    response.pause();
+                    return succeededFuture(new ContainerOutputReadStream(response));
+                }));
     }
 }
