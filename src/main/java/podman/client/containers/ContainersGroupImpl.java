@@ -111,6 +111,23 @@ public class ContainersGroupImpl implements ContainersGroup {
                 response -> succeededFuture());
     }
 
+    private static final UriTemplate UNPAUSE_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/unpause");
+
+    @Override
+    public Future<Void> unpause(String name) {
+        Variables vars =
+                variables().set("base", context.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.POST)
+                .setServer(context.socketAddress())
+                .setURI(UNPAUSE_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 204),
+                response -> succeededFuture());
+    }
+
     private static final UriTemplate KILL_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/kill{?signal}");
 
     @Override

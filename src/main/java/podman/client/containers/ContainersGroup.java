@@ -21,7 +21,13 @@ public interface ContainersGroup {
 
     Future<Void> pause(String name);
 
+    Future<Void> unpause(String name);
+
     Future<Void> kill(String name, String signal);
+
+    default Future<Void> kill(String name) {
+        return kill(name, "SIGKILL");
+    }
 
     Future<Void> stop(String name, boolean ignoreIfStopped, int timeout);
 
