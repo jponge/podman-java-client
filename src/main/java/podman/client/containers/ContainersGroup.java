@@ -19,6 +19,10 @@ public interface ContainersGroup {
 
     Future<Void> start(String name, String detachKeys);
 
+    Future<Void> stop(String name, boolean ignoreIfStopped, int timeout);
+
+    Future<Void> restart(String name, int timeout);
+
     Future<Void> pause(String name);
 
     Future<Void> unpause(String name);
@@ -28,8 +32,6 @@ public interface ContainersGroup {
     default Future<Void> kill(String name) {
         return kill(name, "SIGKILL");
     }
-
-    Future<Void> stop(String name, boolean ignoreIfStopped, int timeout);
 
     Flow.Publisher<MultiplexedStreamFrame> logs(String name, ContainerGetLogsOptions options);
 }

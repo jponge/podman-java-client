@@ -169,6 +169,25 @@ public class ContainersGroupImpl implements ContainersGroup {
                 response -> succeededFuture());
     }
 
+    private static final UriTemplate RESTART_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/restart{?t}");
+
+    @Override
+    public Future<Void> restart(String name, int timeout) {
+        Variables vars = variables()
+                .set("base", context.options().getApiVersion())
+                .set("name", name)
+                .set("t", String.valueOf(timeout));
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.POST)
+                .setServer(context.socketAddress())
+                .setURI(RESTART_TPL.expandToString(vars));
+        return makeSimplifiedRequest(
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 204),
+                response -> succeededFuture());
+    }
+
     private static final UriTemplate LOGS_TPL =
             UriTemplate.of("/{base}/libpod/containers/{name}/logs{?follow,since,stderr,stdout,tail,timestamps,until}");
 

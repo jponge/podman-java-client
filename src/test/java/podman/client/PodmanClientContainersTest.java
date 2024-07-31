@@ -1,10 +1,15 @@
 package podman.client;
 
+import static helpers.AsyncTestHelpers.awaitResult;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.smallrye.mutiny.helpers.test.AssertSubscriber;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,13 +21,6 @@ import podman.client.containers.ContainerDeleteOptions;
 import podman.client.containers.ContainerGetLogsOptions;
 import podman.client.containers.MultiplexedStreamFrame;
 import podman.machine.PodmanMachineClient;
-
-import java.nio.Buffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import static helpers.AsyncTestHelpers.awaitResult;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientContainersTest {
@@ -92,28 +90,27 @@ public class PodmanClientContainersTest {
         assertThat(frames)
                 .isNotEmpty()
                 .anyMatch(frame -> (frame.type() == MultiplexedStreamFrame.Type.STD_OUT)
-                                   && frame.buffer().toString().equals("!... Hello Podman World ...!\n"))
+                        && frame.buffer().toString().equals("!... Hello Podman World ...!\n"))
                 .anyMatch(frame -> (frame.type() == MultiplexedStreamFrame.Type.STD_OUT)
-                                   && frame.buffer().toString().equals("Website:   https://podman.io\n"));
+                        && frame.buffer().toString().equals("Website:   https://podman.io\n"));
 
         awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
     }
 
     @Test
     void lifeOfLongRunningContainerWithPause() throws Throwable {
-        JsonObject createResult = awaitResult(
-                client.containers().create(new ContainerCreateOptions()
+        JsonObject createResult = awaitResult(client.containers()
+                .create(new ContainerCreateOptions()
                         .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
-                        .command(List.of(
-                                "/bin/sh",
-                                "-c",
-                                "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"
-                        ))));
+                        .command(
+                                List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
         String id = createResult.getString("Id");
         awaitResult(client.containers().start(id));
 
         AssertSubscriber<MultiplexedStreamFrame> logsSub = AssertSubscriber.create(Long.MAX_VALUE);
-        client.containers().logs(id, new ContainerGetLogsOptions().setFollow(true)).subscribe(logsSub);
+        client.containers()
+                .logs(id, new ContainerGetLogsOptions().setFollow(true))
+                .subscribe(logsSub);
 
         Thread.sleep(250);
         awaitResult(client.containers().pause(id));
@@ -144,19 +141,18 @@ public class PodmanClientContainersTest {
 
     @Test
     void lifeOfLongRunningContainerWithStartStop() throws Throwable {
-        JsonObject createResult = awaitResult(
-                client.containers().create(new ContainerCreateOptions()
+        JsonObject createResult = awaitResult(client.containers()
+                .create(new ContainerCreateOptions()
                         .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
-                        .command(List.of(
-                                "/bin/sh",
-                                "-c",
-                                "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"
-                        ))));
+                        .command(
+                                List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
         String id = createResult.getString("Id");
         awaitResult(client.containers().start(id));
 
         AssertSubscriber<MultiplexedStreamFrame> logsSub = AssertSubscriber.create(Long.MAX_VALUE);
-        client.containers().logs(id, new ContainerGetLogsOptions().setFollow(true)).subscribe(logsSub);
+        client.containers()
+                .logs(id, new ContainerGetLogsOptions().setFollow(true))
+                .subscribe(logsSub);
 
         Thread.sleep(250);
         awaitResult(client.containers().stop(id, false, 1));
@@ -165,7 +161,9 @@ public class PodmanClientContainersTest {
 
         awaitResult(client.containers().start(id));
         logsSub = AssertSubscriber.create(Long.MAX_VALUE);
-        client.containers().logs(id, new ContainerGetLogsOptions().setFollow(true)).subscribe(logsSub);
+        client.containers()
+                .logs(id, new ContainerGetLogsOptions().setFollow(true))
+                .subscribe(logsSub);
         Thread.sleep(250);
 
         awaitResult(client.containers().kill(id));
@@ -186,5 +184,37 @@ public class PodmanClientContainersTest {
         assertThat(nums2).startsWith(nums1.toArray(new Integer[0]));
         assertThat(nums2.get(nums1.size())).isEqualTo(0);
         assertThat(nums2.get(nums1.size() + 1)).isEqualTo(1);
+    }
+
+    @Test
+    void lifeOfLongRunningContainerWithRestart() throws Throwable {
+        JsonObject createResult = awaitResult(client.containers()
+                .create(new ContainerCreateOptions()
+                        .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
+                        .command(
+                                List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
+        String id = createResult.getString("Id");
+        awaitResult(client.containers().start(id));
+
+        Thread.sleep(250);
+        awaitResult(client.containers().restart(id, 1));
+        Thread.sleep(250);
+
+        AssertSubscriber<MultiplexedStreamFrame> logsSub = AssertSubscriber.create(Long.MAX_VALUE);
+        client.containers()
+                .logs(id, new ContainerGetLogsOptions().setFollow(true))
+                .subscribe(logsSub);
+
+        awaitResult(client.containers().kill(id));
+        awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
+
+        logsSub.awaitCompletion();
+        List<Integer> nums = logsSub.getItems().stream()
+                .map(MultiplexedStreamFrame::buffer)
+                .map(buffer -> Integer.valueOf(buffer.toString().trim()))
+                .toList();
+
+        List<Integer> unique = nums.stream().distinct().toList();
+        assertThat(unique.size()).isLessThan(nums.size());
     }
 }
