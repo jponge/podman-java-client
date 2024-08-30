@@ -19,7 +19,7 @@
         <netty.version>4.1.111.Final</netty.version>
         <junit.version>5.10.3</junit.version>
         <assertj.version>3.26.3</assertj.version>
-        <awaitility.version>4.2.1</awaitility.version>
+        <awaitility.version>4.2.2</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
         <mutiny-zero.version>1.1.1-SNAPSHOT</mutiny-zero.version>
