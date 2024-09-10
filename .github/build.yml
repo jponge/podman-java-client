@@ -1,4 +1,4 @@
-name: SmallRye Build
+name: CI
 
 on:
   push:
@@ -22,24 +22,25 @@ on:
 
 jobs:
   build:
+    name: Build with JDK ${{matrix.java.version}}
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         java: [
-          { 'version': '21', 'opts': '-DskipTests'}
+          { 'version': '21' }
         ]
-    name: build with jdk ${{matrix.java.version}}
 
     steps:
       - uses: actions/checkout@v4
-        name: checkout
+        name: Checkout
 
       - uses: actions/setup-java@v4
-        name: set up jdk ${{matrix.java.version}}
+        name: Set up JDK ${{matrix.java.version}}
         with:
           distribution: temurin
           java-version: ${{matrix.java.version}}
           cache: maven
 
-      - name: build with maven
-        run: mvn -B install --file pom.xml ${{matrix.java.opts}}
+      - name: Build with Maven
+        run: ./mvnw -B spotless:check verify -DskipTests
