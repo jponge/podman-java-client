@@ -14,22 +14,21 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import podman.client.containers.ContainerCreateOptions;
 import podman.client.containers.ContainerDeleteOptions;
 import podman.client.containers.ContainerGetLogsOptions;
 import podman.client.containers.ContainerInspectOptions;
 import podman.client.containers.MultiplexedStreamFrame;
+import podman.client.images.ImagePullOptions;
 import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientContainersTest {
 
     static final String PODMAN_HELLO_REF = "quay.io/podman/hello:latest";
+    static final String UBI_MINIMAL_REF = "registry.access.redhat.com/ubi8/ubi-minimal:8.10";
     static final String NOT_FOUND_REF = "quay.io/idonotexist/icannotbefound:idonotexist";
     static final String NOT_REACHABLE_REF = "sample.test/podman/hello:latest";
-    private static final Logger log = LoggerFactory.getLogger(PodmanClientContainersTest.class);
 
     Vertx vertx;
     PodmanClient client;
@@ -43,6 +42,15 @@ public class PodmanClientContainersTest {
         String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
         PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
         client = PodmanClient.create(vertx, options);
+
+        pull(UBI_MINIMAL_REF);
+        pull(PODMAN_HELLO_REF);
+    }
+
+    void pull(String ubiMinimalRef) {
+        AssertSubscriber<JsonObject> sub = AssertSubscriber.create(Long.MAX_VALUE);
+        client.images().pull(ubiMinimalRef, new ImagePullOptions()).subscribe(sub);
+        sub.awaitCompletion();
     }
 
     @AfterAll
@@ -54,9 +62,7 @@ public class PodmanClientContainersTest {
     @Test
     void createAndDeleteContainer() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
-                .create(new ContainerCreateOptions()
-                        .image("quay.io/podman/hello:latest")
-                        .remove(true)));
+                .create(new ContainerCreateOptions().image(PODMAN_HELLO_REF).remove(true)));
         String id = createResult.getString("Id");
 
         assertThat(awaitResult(client.containers().exists(id))).isTrue();
@@ -76,8 +82,8 @@ public class PodmanClientContainersTest {
 
     @Test
     void inspectContainer() throws Throwable {
-        JsonObject createResult = awaitResult(
-                client.containers().create(new ContainerCreateOptions().image("quay.io/podman/hello:latest")));
+        JsonObject createResult =
+                awaitResult(client.containers().create(new ContainerCreateOptions().image(PODMAN_HELLO_REF)));
         String id = createResult.getString("Id");
 
         awaitResult(client.containers().start(id));
@@ -92,8 +98,8 @@ public class PodmanClientContainersTest {
 
     @Test
     void getLogsPodmanHello() throws Throwable {
-        JsonObject createResult = awaitResult(
-                client.containers().create(new ContainerCreateOptions().image("quay.io/podman/hello:latest")));
+        JsonObject createResult =
+                awaitResult(client.containers().create(new ContainerCreateOptions().image(PODMAN_HELLO_REF)));
         String id = createResult.getString("Id");
 
         awaitResult(client.containers().start(id));
@@ -118,7 +124,7 @@ public class PodmanClientContainersTest {
     void lifeOfLongRunningContainerWithPause() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
                 .create(new ContainerCreateOptions()
-                        .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
+                        .image(UBI_MINIMAL_REF)
                         .command(
                                 List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
         String id = createResult.getString("Id");
@@ -160,7 +166,7 @@ public class PodmanClientContainersTest {
     void lifeOfLongRunningContainerWithStartStop() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
                 .create(new ContainerCreateOptions()
-                        .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
+                        .image(UBI_MINIMAL_REF)
                         .command(
                                 List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
         String id = createResult.getString("Id");
@@ -207,7 +213,7 @@ public class PodmanClientContainersTest {
     void lifeOfLongRunningContainerWithRestart() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
                 .create(new ContainerCreateOptions()
-                        .image("registry.access.redhat.com/ubi8/ubi-minimal:8.10")
+                        .image(UBI_MINIMAL_REF)
                         .command(
                                 List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
         String id = createResult.getString("Id");
