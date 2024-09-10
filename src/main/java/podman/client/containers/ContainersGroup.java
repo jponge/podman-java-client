@@ -34,4 +34,6 @@ public interface ContainersGroup {
     }
 
     Flow.Publisher<MultiplexedStreamFrame> logs(String name, ContainerGetLogsOptions options);
+
+    Future<JsonObject> inspect(String name, ContainerInspectOptions options);
 }
