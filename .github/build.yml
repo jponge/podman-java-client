@@ -26,9 +26,6 @@ jobs:
     strategy:
       matrix:
         java: [
-          { 'version': '11', 'opts': '-DskipTests' },
-          { 'version': '17', 'opts': '-DskipTests' },
-          { 'version': '20', 'opts': '-DskipTests' },
           { 'version': '21', 'opts': '-DskipTests'}
         ]
     name: build with jdk ${{matrix.java.version}}
