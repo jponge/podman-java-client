@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import podman.client.containers.ContainerCreateOptions;
 import podman.client.containers.ContainerDeleteOptions;
 import podman.client.containers.ContainerGetLogsOptions;
+import podman.client.containers.ContainerInspectOptions;
 import podman.client.containers.MultiplexedStreamFrame;
 import podman.machine.PodmanMachineClient;
 
@@ -71,6 +72,22 @@ public class PodmanClientContainersTest {
         assertThat(deleteResult.getJsonObject(0).getString("Id")).isEqualTo(id);
 
         assertThat(awaitResult(client.containers().exists(id))).isFalse();
+    }
+
+    @Test
+    void inspectContainer() throws Throwable {
+        JsonObject createResult = awaitResult(
+                client.containers().create(new ContainerCreateOptions().image("quay.io/podman/hello:latest")));
+        String id = createResult.getString("Id");
+
+        awaitResult(client.containers().start(id));
+
+        JsonObject inspection =
+                awaitResult(client.containers().inspect(id, new ContainerInspectOptions().setSize(false)));
+        assertThat(inspection.containsKey("Id")).isTrue();
+        assertThat(inspection.getString("Id")).isEqualTo(id);
+
+        awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
     }
 
     @Test
