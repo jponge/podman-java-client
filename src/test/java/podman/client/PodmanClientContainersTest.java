@@ -3,6 +3,7 @@ package podman.client;
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import helpers.PodmanHelpers;
 import io.smallrye.mutiny.helpers.test.AssertSubscriber;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -20,7 +21,6 @@ import podman.client.containers.ContainerGetLogsOptions;
 import podman.client.containers.ContainerInspectOptions;
 import podman.client.containers.MultiplexedStreamFrame;
 import podman.client.images.ImagePullOptions;
-import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientContainersTest {
@@ -38,8 +38,7 @@ public class PodmanClientContainersTest {
         VertxOptions vertxOptions = new VertxOptions().setPreferNativeTransport(true);
         vertx = Vertx.vertx(vertxOptions);
 
-        PodmanMachineClient machineClient = PodmanMachineClient.create(vertx);
-        String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
+        String socketPath = awaitResult(PodmanHelpers.podmanSocketPath(vertx));
         PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
         client = PodmanClient.create(vertx, options);
 

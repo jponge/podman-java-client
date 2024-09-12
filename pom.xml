@@ -24,6 +24,7 @@
         <zt-exec.version>1.12</zt-exec.version>
         <mutiny-zero.version>1.1.0</mutiny-zero.version>
         <mutiny.version>2.6.2</mutiny.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +91,12 @@
             <groupId>io.smallrye.reactive</groupId>
             <artifactId>mutiny</artifactId>
             <version>${mutiny.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

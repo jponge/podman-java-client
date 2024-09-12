@@ -3,6 +3,7 @@ package podman.client;
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import helpers.PodmanHelpers;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.volumes.VolumeCreateOptions;
-import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientVolumesTest {
@@ -25,8 +25,7 @@ public class PodmanClientVolumesTest {
         VertxOptions vertxOptions = new VertxOptions().setPreferNativeTransport(true);
         vertx = Vertx.vertx(vertxOptions);
 
-        PodmanMachineClient machineClient = PodmanMachineClient.create(vertx);
-        String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
+        String socketPath = awaitResult(PodmanHelpers.podmanSocketPath(vertx));
         PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
         client = PodmanClient.create(vertx, options);
     }
