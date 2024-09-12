@@ -5,12 +5,6 @@ import io.vertx.uritemplate.Variables;
 public class ContainerInspectOptions {
 
     private boolean size;
-    private String since;
-    private boolean stderr = true;
-    private boolean stdout = true;
-    private String tail;
-    private boolean timestamps;
-    private String until;
 
     public boolean size() {
         return size;

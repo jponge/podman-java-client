@@ -18,6 +18,7 @@ import podman.client.containers.ContainerCreateOptions;
 import podman.client.containers.ContainerDeleteOptions;
 import podman.client.containers.ContainerGetLogsOptions;
 import podman.client.containers.ContainerInspectOptions;
+import podman.client.containers.ContainerTopOptions;
 import podman.client.containers.MultiplexedStreamFrame;
 import podman.client.images.ImagePullOptions;
 import podman.machine.PodmanMachineClient;
@@ -93,6 +94,25 @@ public class PodmanClientContainersTest {
         assertThat(inspection.containsKey("Id")).isTrue();
         assertThat(inspection.getString("Id")).isEqualTo(id);
 
+        awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
+    }
+
+    @Test
+    void listProcesses() throws Throwable {
+        JsonObject createResult = awaitResult(client.containers()
+                .create(new ContainerCreateOptions()
+                        .image(UBI_MINIMAL_REF)
+                        .command(
+                                List.of("/bin/sh", "-c", "i=0; while true; do echo $i; i=$((i+1)); sleep 0.1; done"))));
+        String id = createResult.getString("Id");
+        awaitResult(client.containers().start(id));
+        JsonObject top = awaitResult(client.containers().top(id, new ContainerTopOptions()));
+        assertThat(top.containsKey("Processes")).isTrue();
+        assertThat(top.containsKey("Titles")).isTrue();
+        assertThat(top.getJsonArray("Titles").stream())
+                .containsExactlyInAnyOrder("USER", "PID", "PPID", "%CPU", "ELAPSED", "TTY", "TIME", "COMMAND");
+
+        awaitResult(client.containers().kill(id));
         awaitResult(client.containers().delete(id, new ContainerDeleteOptions().setIgnore(true)));
     }
 

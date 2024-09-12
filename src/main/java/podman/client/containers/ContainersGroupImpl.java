@@ -220,4 +220,19 @@ public class ContainersGroupImpl implements ContainersGroup {
                 context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
                         .map(Buffer::toJsonObject));
     }
+
+    private static final UriTemplate TOP_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/top");
+
+    @Override
+    public Future<JsonObject> top(String name, ContainerTopOptions options) {
+        Variables vars =
+                variables().set("base", context.options().getApiVersion()).set("name", name);
+        RequestOptions requestOptions = new RequestOptions()
+                .setMethod(HttpMethod.GET)
+                .setServer(context.socketAddress())
+                .setURI(TOP_TPL.expandToString(options.fillQueryParams(vars)));
+        return makeSimplifiedRequest(
+                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
+                        .map(Buffer::toJsonObject));
+    }
 }
