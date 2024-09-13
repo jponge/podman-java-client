@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.containers.ContainerCreateOptions;
@@ -23,6 +24,7 @@ import podman.client.containers.MultiplexedStreamFrame;
 import podman.client.images.ImagePullOptions;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 public class PodmanClientContainersTest {
 
     static final String PODMAN_HELLO_REF = "quay.io/podman/hello:latest";

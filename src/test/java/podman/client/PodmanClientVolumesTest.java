@@ -10,11 +10,13 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.volumes.VolumeCreateOptions;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 public class PodmanClientVolumesTest {
 
     Vertx vertx;

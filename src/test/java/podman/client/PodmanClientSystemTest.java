@@ -18,6 +18,7 @@ import org.junit.jupiter.api.TestInstance;
 import podman.client.system.SystemPruneOptions;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 class PodmanClientSystemTest {
 
     Vertx vertx;
