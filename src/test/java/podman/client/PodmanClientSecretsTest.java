@@ -69,6 +69,7 @@ public class PodmanClientSecretsTest {
     void inspect() throws Throwable {
         awaitResult(client.secrets().create("yolo", "this", new SecretCreateOptions()));
         JsonObject data = awaitResult(client.secrets().inspect("yolo", true));
+        System.out.println(data.encodePrettily());
         assertThat(data.containsKey("ID")).isTrue();
         assertThat(data.getString("SecretData")).isEqualTo("this");
         data = awaitResult(client.secrets().inspect("yolo", false));
