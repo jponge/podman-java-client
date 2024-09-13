@@ -2,7 +2,11 @@ package podman.internal;
 
 import static io.vertx.core.Future.failedFuture;
 
+import io.smallrye.common.vertx.VertxContext;
+import io.vertx.core.Context;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
@@ -10,6 +14,7 @@ import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.RequestOptions;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import podman.client.RequestException;
 
 public interface HttpClientHelpers {
@@ -84,5 +89,16 @@ public interface HttpClientHelpers {
             }
         }
         return false;
+    }
+
+    static <T> Future<T> executeOnVertxContext(Vertx vertx, Supplier<Future<T>> action) {
+        if (Context.isOnEventLoopThread()) {
+            return action.get();
+        } else {
+            Context context = VertxContext.getOrCreateDuplicatedContext(vertx);
+            Promise<T> promise = Promise.promise();
+            context.runOnContext(v -> action.get().onSuccess(promise::complete).onFailure(promise::fail));
+            return promise.future();
+        }
     }
 }
