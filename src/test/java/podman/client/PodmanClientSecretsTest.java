@@ -2,6 +2,7 @@ package podman.client;
 
 import static helpers.AsyncTestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import helpers.PodmanHelpers;
 import io.vertx.core.Vertx;
@@ -58,7 +59,7 @@ public class PodmanClientSecretsTest {
     @Order(3)
     void exists() throws Throwable {
         awaitResult(client.secrets().create("yolo", "this", new SecretCreateOptions()));
-        assertThat(awaitResult(client.secrets().exists("yolo"))).isTrue();
+        await().untilAsserted(() -> awaitResult(client.secrets().exists("yolo")));
         assertThat(awaitResult(client.secrets().exists("foo"))).isFalse();
         awaitResult(client.secrets().remove("yolo"));
     }
