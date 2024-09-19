@@ -1,6 +1,6 @@
 package podman.machine;
 
-import static helpers.AsyncTestHelpers.awaitResult;
+import static helpers.TestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

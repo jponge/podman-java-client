@@ -1,6 +1,7 @@
 package podman.client;
 
-import static helpers.AsyncTestHelpers.awaitResult;
+import static helpers.TestHelpers.awaitResult;
+import static helpers.TestHelpers.podmanSocketPath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.system.SystemPruneOptions;
-import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PodmanClientSystemTest {
@@ -25,9 +25,7 @@ class PodmanClientSystemTest {
 
     @BeforeEach
     void setup() throws Throwable {
-        PodmanMachineClient machineClient = PodmanMachineClient.create(vertx);
-        String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
-        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
+        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(podmanSocketPath());
         client = PodmanClient.create(vertx, options);
     }
 

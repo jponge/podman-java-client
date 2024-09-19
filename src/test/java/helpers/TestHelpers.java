@@ -5,8 +5,12 @@ import static org.awaitility.Awaitility.await;
 import io.vertx.core.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public interface AsyncTestHelpers {
+public interface TestHelpers {
+
+    Logger LOGGER = Logger.getLogger(TestHelpers.class.getName());
 
     static <T> T awaitResult(Future<T> future) throws Throwable {
         AtomicBoolean done = new AtomicBoolean();
@@ -26,5 +30,17 @@ public interface AsyncTestHelpers {
         } else {
             return result.get();
         }
+    }
+
+    static String podmanSocketPath() {
+        // TODO: his remains a bit brittle, perhaps we should assume podman-machine on Windows/macOS, and what is below
+        String path = System.getenv("PODMAN_SOCKET_PATH");
+        if (path == null) {
+            path = "/var/run/docker.sock";
+            LOGGER.log(
+                    Level.WARNING,
+                    "PODMAN_SOCKET_PATH not set, defaulting to /var/run/docker.sock to run tests but this might not be what you want...");
+        }
+        return path;
     }
 }
