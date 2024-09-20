@@ -42,5 +42,24 @@ jobs:
           java-version: ${{matrix.java.version}}
           cache: maven
 
-      - name: Build with Maven
-        run: ./mvnw -B spotless:check verify -DskipTests
+      - name: Remove old Podman from the distro
+        run: sudo apt-get remove -y podman
+
+      - name: Install Podman using Homebrew
+        run: |
+          echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"          
+          brew install crun
+          brew install podman
+          podman --version
+
+      - name: Run Podman API service on a Unix socket
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman system service --time=0 unix://${{ runner.temp }}/podman.sock &
+
+      - name: Build and test with Maven
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          export PODMAN_SOCKET_PATH="${{ runner.temp }}/podman.sock"
+          ./mvnw --batch-mode --no-transfer-progress spotless:check verify
