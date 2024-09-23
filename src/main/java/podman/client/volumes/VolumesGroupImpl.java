@@ -34,6 +34,7 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .addHeader("Content-Type", "application/json")
                 .setURI(CREATE_TPL.expandToString(vars));
         return makeSimplifiedRequestWithPayload(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 Buffer.buffer(options.json().encode()),
@@ -52,8 +53,11 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .setServer(context.socketAddress())
                 .setURI(INSPECT_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate LIST_TPL = UriTemplate.of("/{base}/libpod/volumes/json{?filters}");
@@ -68,8 +72,11 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .setServer(context.socketAddress())
                 .setURI(LIST_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonArray));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonArray));
     }
 
     private static final UriTemplate PRUNE_TPL = UriTemplate.of("/{base}/libpod/volumes/prune{?filters}");
@@ -84,8 +91,11 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .setServer(context.socketAddress())
                 .setURI(PRUNE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonArray));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonArray));
     }
 
     private static final UriTemplate REMOVE_TPL = UriTemplate.of("/{base}/libpod/volumes/{name}{?force}");
@@ -101,6 +111,7 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .setServer(context.socketAddress())
                 .setURI(REMOVE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204),
@@ -118,6 +129,7 @@ public class VolumesGroupImpl implements VolumesGroup {
                 .setServer(context.socketAddress())
                 .setURI(EXISTS_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204, 404),

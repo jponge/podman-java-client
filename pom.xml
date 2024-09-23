@@ -24,6 +24,7 @@
         <zt-exec.version>1.12</zt-exec.version>
         <mutiny-zero.version>1.1.0</mutiny-zero.version>
         <mutiny.version>2.6.2</mutiny.version>
+        <smallrye-common-vertx-context.version>2.5.0</smallrye-common-vertx-context.version>
     </properties>
 
     <dependencyManagement>
@@ -63,6 +64,11 @@
             <groupId>io.smallrye.reactive</groupId>
             <artifactId>mutiny-zero-vertx-publishers</artifactId>
             <version>${mutiny-zero.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.common</groupId>
+            <artifactId>smallrye-common-vertx-context</artifactId>
+            <version>${smallrye-common-vertx-context.version}</version>
         </dependency>
         <dependency>
             <!-- FIXME (hack around macOS netty-resolver-dns-native-macos and netty-transport-native-kqueue) -->
