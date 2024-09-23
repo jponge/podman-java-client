@@ -103,7 +103,7 @@ public interface HttpClientHelpers {
         } else {
             Context context = VertxContext.getOrCreateDuplicatedContext(vertx);
             Promise<T> promise = Promise.promise();
-            context.runOnContext(v -> action.get().onSuccess(promise::complete).onFailure(promise::fail));
+            context.runOnContext(v -> action.get().onComplete(promise::complete, promise::fail));
             return promise.future();
         }
     }
