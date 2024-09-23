@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.containers.ContainerCreateOptions;
@@ -139,6 +140,7 @@ public class PodmanClientContainersTest {
     }
 
     @Test
+    @Tag("rootful")
     void lifeOfLongRunningContainerWithPause() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
                 .create(new ContainerCreateOptions()
