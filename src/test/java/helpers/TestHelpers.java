@@ -33,7 +33,7 @@ public interface TestHelpers {
     }
 
     static String podmanSocketPath() {
-        // TODO: his remains a bit brittle, perhaps we should assume podman-machine on Windows/macOS, and what is below
+        // TODO: it remains a bit brittle, perhaps we should assume podman-machine on Windows/macOS, and what is below
         String path = System.getenv("PODMAN_SOCKET_PATH");
         if (path == null) {
             path = "/var/run/docker.sock";
