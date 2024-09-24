@@ -1,6 +1,7 @@
 package podman.client;
 
-import static helpers.AsyncTestHelpers.awaitResult;
+import static helpers.TestHelpers.awaitResult;
+import static helpers.TestHelpers.podmanSocketPath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.smallrye.mutiny.helpers.test.AssertSubscriber;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.containers.ContainerCreateOptions;
@@ -21,7 +23,6 @@ import podman.client.containers.ContainerInspectOptions;
 import podman.client.containers.ContainerTopOptions;
 import podman.client.containers.MultiplexedStreamFrame;
 import podman.client.images.ImagePullOptions;
-import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientContainersTest {
@@ -39,9 +40,7 @@ public class PodmanClientContainersTest {
         VertxOptions vertxOptions = new VertxOptions().setPreferNativeTransport(true);
         vertx = Vertx.vertx(vertxOptions);
 
-        PodmanMachineClient machineClient = PodmanMachineClient.create(vertx);
-        String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
-        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
+        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(podmanSocketPath());
         client = PodmanClient.create(vertx, options);
 
         pull(UBI_MINIMAL_REF);
@@ -141,6 +140,7 @@ public class PodmanClientContainersTest {
     }
 
     @Test
+    @Tag("rootful")
     void lifeOfLongRunningContainerWithPause() throws Throwable {
         JsonObject createResult = awaitResult(client.containers()
                 .create(new ContainerCreateOptions()

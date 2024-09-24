@@ -63,7 +63,7 @@ class PodmanMachineClientImpl implements PodmanMachineClient {
     private Object runJson(String... command) throws IOException, InterruptedException, TimeoutException {
         ProcessResult processResult = new ProcessExecutor(command)
                 .readOutput(true)
-                .redirectErrorStream(true)
+                .redirectErrorStream(false)
                 .timeout(options.getTimeout().toMillis(), TimeUnit.MILLISECONDS)
                 .execute();
         String payload = processResult.outputUTF8();

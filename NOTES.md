@@ -1,5 +1,24 @@
 # Early stage development notes
 
+## How to run tests
+
+You need to define `PODMAN_SOCKET_PATH` to run the tests with `./mvnw verify`.
+
+When using `podman machine` (macOS, Windows):
+
+```
+export PODMAN_SOCKET_PATH=$(podman machine inspect | jq -r '.[0].ConnectionInfo.PodmanSocket.Path')
+```
+
+If Podman is running rootless, some operations such as pausing a container do not work.
+Use the `rootless` Maven profile as in:
+
+```
+./mvnw verify -Prootless
+```
+
+This won't run tests annotated with `@Tag("rootful")`.
+
 ## No JSON mapping
 
 Return types are almost always `JsonObject` / `JsonArray`.

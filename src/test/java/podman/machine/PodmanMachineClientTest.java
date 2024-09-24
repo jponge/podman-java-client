@@ -1,6 +1,6 @@
 package podman.machine;
 
-import static helpers.AsyncTestHelpers.awaitResult;
+import static helpers.TestHelpers.awaitResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,8 +14,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @TestInstance(Lifecycle.PER_CLASS)
+@DisabledOnOs(OS.LINUX)
 class PodmanMachineClientTest {
 
     Vertx vertx;

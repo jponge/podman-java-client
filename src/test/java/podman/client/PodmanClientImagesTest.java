@@ -1,6 +1,7 @@
 package podman.client;
 
-import static helpers.AsyncTestHelpers.awaitResult;
+import static helpers.TestHelpers.awaitResult;
+import static helpers.TestHelpers.podmanSocketPath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.smallrye.mutiny.helpers.test.AssertSubscriber;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import podman.client.images.ImagePullOptions;
-import podman.machine.PodmanMachineClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PodmanClientImagesTest {
@@ -31,9 +31,7 @@ public class PodmanClientImagesTest {
         VertxOptions vertxOptions = new VertxOptions().setPreferNativeTransport(true);
         vertx = Vertx.vertx(vertxOptions);
 
-        PodmanMachineClient machineClient = PodmanMachineClient.create(vertx);
-        String socketPath = awaitResult(machineClient.findDefaultMachineConnectionSocketPath());
-        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(socketPath);
+        PodmanClient.Options options = new PodmanClient.Options().setSocketPath(podmanSocketPath());
         client = PodmanClient.create(vertx, options);
     }
 
