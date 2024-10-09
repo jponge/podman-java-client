@@ -16,7 +16,7 @@
         <palantir-java-format.version>2.43.0</palantir-java-format.version>
 
         <vertx.version>4.5.10</vertx.version>
-        <netty.version>4.1.113.Final</netty.version>
+        <netty.version>4.1.114.Final</netty.version>
         <junit.version>5.11.1</junit.version>
         <assertj.version>3.26.3</assertj.version>
         <awaitility.version>4.2.2</awaitility.version>
