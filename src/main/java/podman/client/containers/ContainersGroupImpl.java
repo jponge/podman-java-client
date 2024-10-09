@@ -34,6 +34,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(CREATE_TPL.expandToString(vars));
         return makeSimplifiedRequestWithPayload(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 Buffer.buffer(options.json().encode()),
@@ -53,8 +54,11 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(DELETE_TPL.expandToString(options.fillQueryParams(vars)));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonArray));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonArray));
     }
 
     private static final UriTemplate EXISTS_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/exists");
@@ -68,6 +72,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(EXISTS_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204, 404),
@@ -88,6 +93,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(START_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -105,6 +111,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(PAUSE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -122,6 +129,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(UNPAUSE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -142,6 +150,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(KILL_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -163,6 +172,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(STOP_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -182,6 +192,7 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(RESTART_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 204),
@@ -200,7 +211,11 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(LOGS_TPL.expandToString(options.fillQueryParams(vars)));
         return VertxPublisher.fromFuture(() -> makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> {
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> {
                     response.pause();
                     return succeededFuture(new ContainerOutputReadStream(response));
                 }));
@@ -217,8 +232,11 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(INSPECT_TPL.expandToString(options.fillQueryParams(vars)));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate TOP_TPL = UriTemplate.of("/{base}/libpod/containers/{name}/top");
@@ -232,7 +250,10 @@ public class ContainersGroupImpl implements ContainersGroup {
                 .setServer(context.socketAddress())
                 .setURI(TOP_TPL.expandToString(options.fillQueryParams(vars)));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 }

@@ -37,8 +37,11 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(context.socketAddress())
                 .setURI(VERSION_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                options,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate INFO_TPL = UriTemplate.of("/{base}/libpod/info");
@@ -51,8 +54,11 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(context.socketAddress())
                 .setURI(INFO_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                options,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate DF_TPL = UriTemplate.of("/{base}/system/df");
@@ -65,8 +71,11 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(context.socketAddress())
                 .setURI(DF_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                options,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate PING_TPL = UriTemplate.of("/{base}/libpod/_ping");
@@ -79,7 +88,7 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(context.socketAddress())
                 .setURI(PING_TPL.expandToString(vars));
         return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(), options, response -> statusCode(response, 200), response -> {
+                context.vertx(), context.httpClient(), options, response -> statusCode(response, 200), response -> {
                     JsonObject result = new JsonObject();
                     response.headers().forEach(result::put);
                     return succeededFuture(result);
@@ -98,8 +107,11 @@ public class SystemGroupImpl implements SystemGroup {
                 .setServer(context.socketAddress())
                 .setURI(uri);
         return HttpClientHelpers.makeSimplifiedRequest(
-                context.httpClient(), options, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                options,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate EVENTS_TPL = UriTemplate.of("/{base}/libpod/events{?filters,stream,since,until}");
@@ -114,7 +126,11 @@ public class SystemGroupImpl implements SystemGroup {
                 .setURI(uri);
         return new Transform<>(
                 VertxPublisher.fromFuture(() -> HttpClientHelpers.makeSimplifiedRequest(
-                        context.httpClient(), options, response -> statusCode(response, 200), response -> {
+                        context.vertx(),
+                        context.httpClient(),
+                        options,
+                        response -> statusCode(response, 200),
+                        response -> {
                             response.pause();
                             return succeededFuture(
                                     JsonParser.newParser(response).objectValueMode());

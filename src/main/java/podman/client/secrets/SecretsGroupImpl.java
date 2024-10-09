@@ -35,6 +35,7 @@ public class SecretsGroupImpl implements SecretsGroup {
                 .setServer(context.socketAddress())
                 .setURI(CREATE_TPL.expandToString(options.fillQueryParams(vars)));
         return makeSimplifiedRequestWithPayload(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 Buffer.buffer(data),
@@ -53,6 +54,7 @@ public class SecretsGroupImpl implements SecretsGroup {
                 .setServer(context.socketAddress())
                 .setURI(REMOVE_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204),
@@ -70,6 +72,7 @@ public class SecretsGroupImpl implements SecretsGroup {
                 .setServer(context.socketAddress())
                 .setURI(EXISTS_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204, 404),
@@ -89,8 +92,11 @@ public class SecretsGroupImpl implements SecretsGroup {
                 .setServer(context.socketAddress())
                 .setURI(INSPECT_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonObject));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonObject));
     }
 
     private static final UriTemplate LIST_TPL = UriTemplate.of("/{base}/libpod/secrets/json{?filters}");
@@ -105,7 +111,10 @@ public class SecretsGroupImpl implements SecretsGroup {
                 .setServer(context.socketAddress())
                 .setURI(LIST_TPL.expandToString(vars));
         return makeSimplifiedRequest(
-                context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> response.body()
-                        .map(Buffer::toJsonArray));
+                context.vertx(),
+                context.httpClient(),
+                requestOptions,
+                response -> statusCode(response, 200),
+                response -> response.body().map(Buffer::toJsonArray));
     }
 }

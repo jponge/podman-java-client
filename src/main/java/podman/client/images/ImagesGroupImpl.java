@@ -43,7 +43,11 @@ public class ImagesGroupImpl implements ImagesGroup {
         }
         return new Transform<>(
                 VertxPublisher.fromFuture(() -> HttpClientHelpers.makeSimplifiedRequest(
-                        context.httpClient(), requestOptions, response -> statusCode(response, 200), response -> {
+                        context.vertx(),
+                        context.httpClient(),
+                        requestOptions,
+                        response -> statusCode(response, 200),
+                        response -> {
                             response.pause();
                             return succeededFuture(
                                     JsonParser.newParser(response).objectValueMode());
@@ -62,6 +66,7 @@ public class ImagesGroupImpl implements ImagesGroup {
                 .setServer(context.socketAddress())
                 .setURI(EXISTS_TPL.expandToString(vars));
         return makeSimplifiedRequest(
+                context.vertx(),
                 context.httpClient(),
                 requestOptions,
                 response -> statusCode(response, 200, 204, 404),

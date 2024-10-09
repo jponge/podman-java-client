@@ -2,7 +2,11 @@ package podman.internal;
 
 import static io.vertx.core.Future.failedFuture;
 
+import io.smallrye.common.vertx.VertxContext;
+import io.vertx.core.Context;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
@@ -10,35 +14,41 @@ import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.RequestOptions;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import podman.client.RequestException;
 
 public interface HttpClientHelpers {
 
     static <T> Future<T> makeRequest(
-            HttpClient httpClient, RequestOptions options, Function<HttpClientResponse, Future<T>> handler) {
-        return httpClient
+            Vertx vertx,
+            HttpClient httpClient,
+            RequestOptions options,
+            Function<HttpClientResponse, Future<T>> handler) {
+        return executeOnVertxContext(vertx, () -> httpClient
                 .request(options)
                 .compose(HttpClientRequest::send)
-                .compose(handler, HttpClientHelpers::wrapFailure);
+                .compose(handler, HttpClientHelpers::wrapFailure));
     }
 
     static <T> Future<T> makeRequestWithPayload(
+            Vertx vertx,
             HttpClient httpClient,
             RequestOptions options,
             Buffer payload,
             Function<HttpClientResponse, Future<T>> handler) {
-        return httpClient
+        return executeOnVertxContext(vertx, () -> httpClient
                 .request(options)
                 .compose(httpClientRequest -> httpClientRequest.send(payload))
-                .compose(handler, HttpClientHelpers::wrapFailure);
+                .compose(handler, HttpClientHelpers::wrapFailure));
     }
 
     static <T> Future<T> makeSimplifiedRequest(
+            Vertx vertx,
             HttpClient httpClient,
             RequestOptions options,
             Predicate<HttpClientResponse> predicate,
             Function<HttpClientResponse, Future<T>> handler) {
-        return makeRequest(httpClient, options, response -> {
+        return makeRequest(vertx, httpClient, options, response -> {
             if (predicate.test(response)) {
                 return handler.apply(response);
             } else {
@@ -48,12 +58,13 @@ public interface HttpClientHelpers {
     }
 
     static <T> Future<T> makeSimplifiedRequestWithPayload(
+            Vertx vertx,
             HttpClient httpClient,
             RequestOptions options,
             Buffer payload,
             Predicate<HttpClientResponse> predicate,
             Function<HttpClientResponse, Future<T>> handler) {
-        return makeRequestWithPayload(httpClient, options, payload, response -> {
+        return makeRequestWithPayload(vertx, httpClient, options, payload, response -> {
             if (predicate.test(response)) {
                 return handler.apply(response);
             } else {
@@ -84,5 +95,16 @@ public interface HttpClientHelpers {
             }
         }
         return false;
+    }
+
+    static <T> Future<T> executeOnVertxContext(Vertx vertx, Supplier<Future<T>> action) {
+        if (Context.isOnEventLoopThread()) {
+            return action.get();
+        } else {
+            Context context = VertxContext.getOrCreateDuplicatedContext(vertx);
+            Promise<T> promise = Promise.promise();
+            context.runOnContext(v -> action.get().onComplete(promise::complete, promise::fail));
+            return promise.future();
+        }
     }
 }
