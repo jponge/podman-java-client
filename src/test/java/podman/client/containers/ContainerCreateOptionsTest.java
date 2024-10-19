@@ -53,4 +53,25 @@ class ContainerCreateOptionsTest {
         assertThat(json.getJsonArray("dns_server")).isNotNull().isNotEmpty().containsAll(List.of("1.1.1.1", "8.8.8.8"));
         assertThat(json.getBoolean("remove")).isTrue();
     }
+
+    @Test
+    void checkImageVolumes() {
+        JsonObject json = new ContainerCreateOptions()
+                .imageVolumes(List.of(
+                        new ContainerCreateOptions.ImageVolume("dest1", true, "source1", ""),
+                        new ContainerCreateOptions.ImageVolume("dest2", false, "source2", "sub")))
+                .json();
+
+        assertThat(json.getJsonArray("image_volumes"))
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2)
+                .anyMatch(o -> {
+                    JsonObject imageVolume = (JsonObject) o;
+                    return imageVolume.getString("Destination").equals("dest1")
+                            && imageVolume.getBoolean("ReadWrite").equals(true)
+                            && imageVolume.getString("Source").equals("source1")
+                            && imageVolume.getString("subPath").equals("");
+                });
+    }
 }
