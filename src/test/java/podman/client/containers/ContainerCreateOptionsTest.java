@@ -66,12 +66,9 @@ class ContainerCreateOptionsTest {
                 .isNotNull()
                 .isNotEmpty()
                 .hasSize(2)
-                .anyMatch(o -> {
-                    JsonObject imageVolume = (JsonObject) o;
-                    return imageVolume.getString("Destination").equals("dest1")
-                            && imageVolume.getBoolean("ReadWrite").equals(true)
-                            && imageVolume.getString("Source").equals("source1")
-                            && imageVolume.getString("subPath").equals("");
-                });
+                .containsAll(List.of(
+                        JsonObject.of("Destination", "dest1", "ReadWrite", true, "Source", "source1", "subPath", ""),
+                        JsonObject.of(
+                                "Destination", "dest2", "ReadWrite", false, "Source", "source2", "subPath", "sub")));
     }
 }
