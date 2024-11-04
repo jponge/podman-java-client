@@ -313,16 +313,20 @@ public class ContainerCreateOptions {
         return this;
     }
 
-    public record ImageVolume(String destination, boolean readWrite, String source) {}
+    public record ImageVolume(String destination, boolean readWrite, String source, String subPath) {
+        public JsonObject json() {
+            var json = new JsonObject();
+            json.put("Destination", destination);
+            json.put("ReadWrite", readWrite);
+            json.put("Source", source);
+            json.put("subPath", subPath);
+            return json;
+        }
+    }
 
     public ContainerCreateOptions imageVolumes(List<ImageVolume> imageVolumes) {
         JsonArray array = new JsonArray();
-        for (ImageVolume volume : imageVolumes) {
-            array.add(new JsonObject()
-                    .put("Destination", volume.destination)
-                    .put("ReadWrite", volume.readWrite)
-                    .put("Source", volume.source));
-        }
+        imageVolumes.forEach(volume -> array.add(volume.json()));
         payload.put("image_volumes", array);
         return this;
     }
