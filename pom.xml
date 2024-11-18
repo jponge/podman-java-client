@@ -15,7 +15,7 @@
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <palantir-java-format.version>2.43.0</palantir-java-format.version>
 
-        <vertx.version>4.5.10</vertx.version>
+        <vertx.version>4.5.11</vertx.version>
         <netty.version>4.1.114.Final</netty.version>
         <junit.version>5.11.3</junit.version>
         <assertj.version>3.26.3</assertj.version>
