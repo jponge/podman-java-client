@@ -22,7 +22,7 @@
         <awaitility.version>4.2.2</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
-        <mutiny-zero.version>1.1.0</mutiny-zero.version>
+        <mutiny-zero.version>1.1.1</mutiny-zero.version>
         <mutiny.version>2.7.0</mutiny.version>
     </properties>
 
