@@ -19,7 +19,7 @@
         <vertx.version>5.0.4</vertx.version>
 
         <junit.version>5.13.4</junit.version>
-        <assertj.version>3.27.5</assertj.version>
+        <assertj.version>3.27.6</assertj.version>
         <awaitility.version>4.3.0</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
         <zt-exec.version>1.12</zt-exec.version>
