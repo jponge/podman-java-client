@@ -15,7 +15,7 @@
         <spotless-maven-plugin.version>3.0.0</spotless-maven-plugin.version>
         <palantir-java-format.version>2.43.0</palantir-java-format.version>
 
-        <netty.version>4.2.6.Final</netty.version>
+        <netty.version>4.2.7.Final</netty.version>
         <vertx.version>5.0.4</vertx.version>
 
         <junit.version>6.0.0</junit.version>
