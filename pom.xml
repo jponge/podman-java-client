@@ -18,7 +18,7 @@
         <netty.version>4.2.10.Final</netty.version>
         <vertx.version>5.0.7</vertx.version>
 
-        <junit.version>6.0.2</junit.version>
+        <junit.version>6.0.3</junit.version>
         <assertj.version>3.27.7</assertj.version>
         <awaitility.version>4.3.0</awaitility.version>
         <jackson.version>2.16.1</jackson.version>
